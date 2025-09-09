@@ -24,11 +24,12 @@
   "type": "module",
   "exports": {
     ".": "./index.js",
-    "./dist/maplibre-gl-draw.js": "./dist/maplibre-gl-draw.js",
+    "./dist/maplibre-gl-draw-unminified.js": "./index.js",
+    "./dist/maplibre-gl-draw.js": "./index.js",
     "./dist/maplibre-gl-draw.css": "./dist/maplibre-gl-draw.css"
   },
   "style": "dist/maplibre-gl-draw.css",
-  "types": "dist/maplibre-gl-draw.d.ts",
+  "types": "index.d.ts",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "pnpm run build"

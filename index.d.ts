@@ -14,13 +14,13 @@ import {
 
     Map,
 
-    MapEvent,
+    MapEventType,
 
     MapMouseEvent as MaplibreMapMouseEvent,
 
     MapTouchEvent as MaplibreMapTouchEvent,
 
-} from "maplibre-gl-js";
+} from "maplibre-gl";
 
 
 export = MaplibreDraw;
@@ -707,7 +707,7 @@ declare namespace MaplibreDraw {
 
             ) => (e: MapMouseEvent | MapTouchEvent) => boolean;
 
-            isShiftMousedown: (e: MapEvent) => boolean;
+            isShiftMousedown: (e: MapEventType[keyof MapEventType]) => boolean;
 
             isActiveFeature: (e: MapMouseEvent | MapTouchEvent) => boolean;
 
@@ -719,7 +719,7 @@ declare namespace MaplibreDraw {
 
             isVertex: (e: MapMouseEvent | MapTouchEvent) => boolean;
 
-            isShiftDown: (e: MapEvent) => boolean;
+            isShiftDown: (e: MapEventType[keyof MapEventType]) => boolean;
 
             isEscapeKey: (e: KeyboardEvent) => boolean;
 

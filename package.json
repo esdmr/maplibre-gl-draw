@@ -24,28 +24,18 @@
   "type": "module",
   "exports": {
     ".": "./index.js",
-    "./dist/maplibre-gl-draw-unminified.js": "./dist/maplibre-gl-draw-unminified.js",
     "./dist/maplibre-gl-draw.js": "./dist/maplibre-gl-draw.js",
     "./dist/maplibre-gl-draw.css": "./dist/maplibre-gl-draw.css"
   },
-  "main": "dist/maplibre-gl-draw.js",
-  "browser": "dist/maplibre-gl-draw.js",
   "style": "dist/maplibre-gl-draw.css",
   "types": "dist/maplibre-gl-draw.d.ts",
   "scripts": {
     "build": "rollup -c",
-    "build-min": "rollup -c --environment MINIFY:true",
-    "prepublishOnly": "pnpm run build && pnpm run build-min"
+    "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.0",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-replace": "^6.0.1",
-    "@rollup/plugin-terser": "^0.4.4",
     "@types/node": "^20.19.2",
-    "maplibre-gl": "^5.7.0",
-    "rollup": "^4.19.1"
+    "maplibre-gl": "^5.7.0"
   },
   "dependencies": {
     "@mapbox/geojson-area": "^0.2.2",

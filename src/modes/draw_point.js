@@ -47,7 +47,7 @@ DrawPoint.onStop = function(state) {
   }
 };
 
-DrawPoint.toDisplayFeatures = function(state, geojson, display) {
+DrawPoint.toDisplayFeatures = (state, geojson, display) => {
   // Never render the point we're drawing
   const isActivePoint = geojson.properties.id === state.point.id;
   geojson.properties.active = (isActivePoint) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;

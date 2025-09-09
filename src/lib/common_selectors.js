@@ -1,7 +1,7 @@
 import * as Constants from '../constants.js';
 
 export function isOfMetaType(type) {
-  return function(e) {
+  return e => {
     const featureTarget = e.featureTarget;
     if (!featureTarget) return false;
     if (!featureTarget.properties) return false;

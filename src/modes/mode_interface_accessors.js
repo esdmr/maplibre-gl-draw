@@ -212,7 +212,7 @@ ModeInterface.prototype.newFeature = function(geojson) {
  * @param {Object} feature - the object that needs to be checked
  * @returns {Boolean}
  */
-ModeInterface.prototype.isInstanceOf = function(type, feature) {
+ModeInterface.prototype.isInstanceOf = (type, feature) => {
   if (type === Constants.geojsonTypes.POINT) return feature instanceof Point;
   if (type === Constants.geojsonTypes.LINE_STRING) return feature instanceof LineString;
   if (type === Constants.geojsonTypes.POLYGON) return feature instanceof Polygon;

@@ -10,7 +10,8 @@ DrawLineString.onSetup = function(opts) {
   opts = opts || {};
   const featureId = opts.featureId;
 
-  let line, currentVertexPosition;
+  let line;
+  let currentVertexPosition;
   let direction = 'forward';
   if (featureId) {
     line = this.getFeature(featureId);
@@ -132,7 +133,7 @@ DrawLineString.onTrash = function(state) {
   this.changeMode(Constants.modes.SIMPLE_SELECT);
 };
 
-DrawLineString.toDisplayFeatures = function(state, geojson, display) {
+DrawLineString.toDisplayFeatures = (state, geojson, display) => {
   const isActiveLine = geojson.properties.id === state.line.id;
   geojson.properties.active = (isActiveLine) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
   if (!isActiveLine) return display(geojson);

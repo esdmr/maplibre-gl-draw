@@ -20,7 +20,7 @@ export default function(ctx) {
   let currentModeName = null;
   let currentMode = null;
 
-  events.drag = function(event, isDrag) {
+  events.drag = (event, isDrag) => {
     if (isDrag({
       point: event.point,
       time: new Date().getTime()
@@ -32,15 +32,15 @@ export default function(ctx) {
     }
   };
 
-  events.mousedrag = function(event) {
+  events.mousedrag = event => {
     events.drag(event, endInfo => !isClick(mouseDownInfo, endInfo));
   };
 
-  events.touchdrag = function(event) {
+  events.touchdrag = event => {
     events.drag(event, endInfo => !isTap(touchStartInfo, endInfo));
   };
 
-  events.mousemove = function(event) {
+  events.mousemove = event => {
     const button = event.originalEvent.buttons !== undefined ? event.originalEvent.buttons : event.originalEvent.which;
     if (button === 1) {
       return events.mousedrag(event);
@@ -50,7 +50,7 @@ export default function(ctx) {
     currentMode.mousemove(event);
   };
 
-  events.mousedown = function(event) {
+  events.mousedown = event => {
     mouseDownInfo = {
       time: new Date().getTime(),
       point: event.point
@@ -60,7 +60,7 @@ export default function(ctx) {
     currentMode.mousedown(event);
   };
 
-  events.mouseup = function(event) {
+  events.mouseup = event => {
     const target = getFeaturesAndSetCursor(event, ctx);
     event.featureTarget = target;
 
@@ -74,11 +74,11 @@ export default function(ctx) {
     }
   };
 
-  events.mouseout = function(event) {
+  events.mouseout = event => {
     currentMode.mouseout(event);
   };
 
-  events.touchstart = function(event) {
+  events.touchstart = event => {
     if (!ctx.options.touchEnabled) {
       return;
     }
@@ -92,7 +92,7 @@ export default function(ctx) {
     currentMode.touchstart(event);
   };
 
-  events.touchmove = function(event) {
+  events.touchmove = event => {
     if (!ctx.options.touchEnabled) {
       return;
     }
@@ -101,7 +101,7 @@ export default function(ctx) {
     return events.touchdrag(event);
   };
 
-  events.touchend = function(event) {
+  events.touchend = event => {
     // Prevent emulated mouse events because we will fully handle the touch here.
     // This does not stop the touch events from propogating to maplibre though.
     event.originalEvent.preventDefault();
@@ -128,7 +128,7 @@ export default function(ctx) {
     return !(isBackspaceKey || isDeleteKey || isDigitKey);
   };
 
-  events.keydown = function(event) {
+  events.keydown = event => {
     const isMapElement = (event.srcElement || event.target).classList.contains(Constants.classes.CANVAS);
     if (!isMapElement) return; // we only handle events on the map
 
@@ -146,17 +146,17 @@ export default function(ctx) {
     }
   };
 
-  events.keyup = function(event) {
+  events.keyup = event => {
     if (isKeyModeValid(event)) {
       currentMode.keyup(event);
     }
   };
 
-  events.zoomend = function() {
+  events.zoomend = () => {
     ctx.store.changeZoom();
   };
 
-  events.data = function(event) {
+  events.data = event => {
     if (event.dataType === 'style') {
       const { setup, map, options, store } = ctx;
       const hasLayers = options.styles.some(style => map.getLayer(style.id));

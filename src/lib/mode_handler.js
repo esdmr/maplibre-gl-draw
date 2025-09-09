@@ -1,5 +1,5 @@
 
-const ModeHandler = function(mode, DrawContext) {
+const ModeHandler = (mode, DrawContext) => {
 
   const handlers = {
     drag: [],
@@ -31,7 +31,7 @@ const ModeHandler = function(mode, DrawContext) {
     }
   };
 
-  const delegate = function (eventName, event) {
+  const delegate = (eventName, event) => {
     const handles = handlers[eventName];
     let iHandle = handles.length;
     while (iHandle--) {

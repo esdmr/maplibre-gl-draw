@@ -70,9 +70,7 @@ DirectSelect.onMidpoint = function(state, e) {
   state.selectedCoordPaths = [about.coord_path];
 };
 
-DirectSelect.pathsToCoordinates = function(featureId, paths) {
-  return paths.map(coord_path => ({ feature_id: featureId, coord_path }));
-};
+DirectSelect.pathsToCoordinates = (featureId, paths) => paths.map(coord_path => ({ feature_id: featureId, coord_path }));
 
 DirectSelect.onFeature = function(state, e) {
   if (state.selectedCoordPaths.length === 0) this.startDragging(state, e);
@@ -84,7 +82,7 @@ DirectSelect.dragFeature = function(state, e, delta) {
   state.dragMoveLocation = e.lngLat;
 };
 
-DirectSelect.dragVertex = function(state, e, delta) {
+DirectSelect.dragVertex = (state, e, delta) => {
   const selectedCoords = state.selectedCoordPaths.map(coord_path => state.feature.getCoordinate(coord_path));
   const selectedCoordPoints = selectedCoords.map(coords => ({
     type: Constants.geojsonTypes.FEATURE,
@@ -96,8 +94,8 @@ DirectSelect.dragVertex = function(state, e, delta) {
   }));
 
   const constrainedDelta = constrainFeatureMovement(selectedCoordPoints, delta);
-  for (let i = 0; i < selectedCoords.length; i++) {
-    const coord = selectedCoords[i];
+
+  for (const [i, coord] of selectedCoords.entries()) {
     state.feature.updateCoordinate(state.selectedCoordPaths[i], coord[0] + constrainedDelta.lng, coord[1] + constrainedDelta.lat);
   }
 };

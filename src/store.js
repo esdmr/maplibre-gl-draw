@@ -58,7 +58,7 @@ export default function Store(ctx) {
 Store.prototype.createRenderBatch = function() {
   const holdRender = this.render;
   let numRenders = 0;
-  this.render = function() {
+  this.render = () => {
     numRenders++;
   };
 

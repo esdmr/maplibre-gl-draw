@@ -68,7 +68,7 @@ SimpleSelect.fireActionable = function() {
   });
 };
 
-SimpleSelect.getUniqueIds = function(allFeatures) {
+SimpleSelect.getUniqueIds = allFeatures => {
   if (!allFeatures.length) return [];
   const ids = allFeatures.map(s => s.properties.id)
     .filter(id => id !== undefined)
@@ -313,12 +313,11 @@ SimpleSelect.onCombineFeatures = function() {
 
   if (selectedFeatures.length === 0 || selectedFeatures.length < 2) return;
 
-  const coordinates = [], featuresCombined = [];
+  const coordinates = [];
+  const featuresCombined = [];
   const featureType = selectedFeatures[0].type.replace('Multi', '');
 
-  for (let i = 0; i < selectedFeatures.length; i++) {
-    const feature = selectedFeatures[i];
-
+  for (const feature of selectedFeatures) {
     if (feature.type.replace('Multi', '') !== featureType) {
       return;
     }
@@ -362,9 +361,7 @@ SimpleSelect.onUncombineFeatures = function() {
   const createdFeatures = [];
   const featuresUncombined = [];
 
-  for (let i = 0; i < selectedFeatures.length; i++) {
-    const feature = selectedFeatures[i];
-
+  for (const feature of selectedFeatures) {
     if (this.isInstanceOf('MultiFeature', feature)) {
       feature.getFeatures().forEach((subFeature) => {
         this.addFeature(subFeature);

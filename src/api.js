@@ -26,37 +26,32 @@ export default function(ctx, api) {
   // API doesn't emit events by default
   const silent = ctx.options.suppressAPIEvents !== undefined ? !!ctx.options.suppressAPIEvents : true;
 
-  api.getFeatureIdsAt = function(point) {
+  api.getFeatureIdsAt = point => {
     const features = featuresAt.click({ point }, null, ctx);
     return features.map(feature => feature.properties.id);
   };
 
-  api.getSelectedIds = function() {
-    return ctx.store.getSelectedIds();
-  };
+  api.getSelectedIds = () => ctx.store.getSelectedIds();
 
-  api.getSelected = function() {
-    return {
-      type: Constants.geojsonTypes.FEATURE_COLLECTION,
-      features: ctx.store.getSelectedIds().map(id => ctx.store.get(id)).map(feature => feature.toGeoJSON())
-    };
-  };
+  api.getSelected = () => ({
+    type: Constants.geojsonTypes.FEATURE_COLLECTION,
+    features: ctx.store.getSelectedIds().map(id => ctx.store.get(id)).map(feature => feature.toGeoJSON())
+  });
 
-  api.getSelectedPoints = function() {
-    return {
-      type: Constants.geojsonTypes.FEATURE_COLLECTION,
-      features: ctx.store.getSelectedCoordinates().map(coordinate => ({
-        type: Constants.geojsonTypes.FEATURE,
-        properties: {},
-        geometry: {
-          type: Constants.geojsonTypes.POINT,
-          coordinates: coordinate.coordinates
-        }
-      }))
-    };
-  };
+  api.getSelectedPoints = () => ({
+    type: Constants.geojsonTypes.FEATURE_COLLECTION,
 
-  api.set = function(featureCollection) {
+    features: ctx.store.getSelectedCoordinates().map(coordinate => ({
+      type: Constants.geojsonTypes.FEATURE,
+      properties: {},
+      geometry: {
+        type: Constants.geojsonTypes.POINT,
+        coordinates: coordinate.coordinates
+      }
+    }))
+  });
+
+  api.set = featureCollection => {
     if (featureCollection.type === undefined || featureCollection.type !== Constants.geojsonTypes.FEATURE_COLLECTION || !Array.isArray(featureCollection.features)) {
       throw new Error('Invalid FeatureCollection');
     }
@@ -74,7 +69,7 @@ export default function(ctx, api) {
     return newIds;
   };
 
-  api.add = function(geojson) {
+  api.add = geojson => {
     const featureCollection = JSON.parse(JSON.stringify(normalize(geojson)));
 
     const ids = featureCollection.features.map((feature) => {
@@ -112,21 +107,19 @@ export default function(ctx, api) {
   };
 
 
-  api.get = function(id) {
+  api.get = id => {
     const feature = ctx.store.get(id);
     if (feature) {
       return feature.toGeoJSON();
     }
   };
 
-  api.getAll = function() {
-    return {
-      type: Constants.geojsonTypes.FEATURE_COLLECTION,
-      features: ctx.store.getAll().map(feature => feature.toGeoJSON())
-    };
-  };
+  api.getAll = () => ({
+    type: Constants.geojsonTypes.FEATURE_COLLECTION,
+    features: ctx.store.getAll().map(feature => feature.toGeoJSON())
+  });
 
-  api.delete = function(featureIds) {
+  api.delete = featureIds => {
     ctx.store.delete(featureIds, { silent });
     // If we were in direct select mode and our selected feature no longer exists
     // (because it was deleted), we need to get out of that mode.
@@ -139,7 +132,7 @@ export default function(ctx, api) {
     return api;
   };
 
-  api.deleteAll = function() {
+  api.deleteAll = () => {
     ctx.store.delete(ctx.store.getAllIds(), { silent });
     // If we were in direct select mode, now our selected feature no longer exists,
     // so escape that mode.
@@ -152,7 +145,7 @@ export default function(ctx, api) {
     return api;
   };
 
-  api.changeMode = function(mode, modeOptions = {}) {
+  api.changeMode = (mode, modeOptions = {}) => {
     // Avoid changing modes just to re-select what's already selected
     if (mode === Constants.modes.SIMPLE_SELECT && api.getMode() === Constants.modes.SIMPLE_SELECT) {
       if (stringSetsAreEqual((modeOptions.featureIds || []), ctx.store.getSelectedIds())) return api;
@@ -172,26 +165,24 @@ export default function(ctx, api) {
     return api;
   };
 
-  api.getMode = function() {
-    return ctx.events.getMode();
-  };
+  api.getMode = () => ctx.events.getMode();
 
-  api.trash = function() {
+  api.trash = () => {
     ctx.events.trash({ silent });
     return api;
   };
 
-  api.combineFeatures = function() {
+  api.combineFeatures = () => {
     ctx.events.combineFeatures({ silent });
     return api;
   };
 
-  api.uncombineFeatures = function() {
+  api.uncombineFeatures = () => {
     ctx.events.uncombineFeatures({ silent });
     return api;
   };
 
-  api.setFeatureProperty = function(featureId, property, value) {
+  api.setFeatureProperty = (featureId, property, value) => {
     ctx.store.setFeatureProperty(featureId, property, value, { silent });
     return api;
   };

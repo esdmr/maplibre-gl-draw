@@ -87,7 +87,7 @@ DrawPolygon.onStop = function(state) {
   }
 };
 
-DrawPolygon.toDisplayFeatures = function(state, geojson, display) {
+DrawPolygon.toDisplayFeatures = (state, geojson, display) => {
   const isActivePolygon = geojson.properties.id === state.polygon.id;
   geojson.properties.active = (isActivePolygon) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
   if (!isActivePolygon) return display(geojson);

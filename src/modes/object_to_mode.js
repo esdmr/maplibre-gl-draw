@@ -20,7 +20,7 @@ const eventKeys = Object.keys(eventMapper);
 export default function(modeObject) {
   const modeObjectKeys = Object.keys(modeObject);
 
-  return function(ctx, startOpts = {}) {
+  return (ctx, startOpts = {}) => {
     let state = {};
 
     const mode = modeObjectKeys.reduce((m, k) => {

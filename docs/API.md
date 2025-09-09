@@ -3,17 +3,17 @@
 To use Draw
 
 ```js
-// Create a Mapbox GL JS map
+// Create a Maplibre GL JS map
 var map = new Map(mapOptions);
 
 // Create a Draw control
-var draw = new MapboxDraw(drawOptions);
+var draw = new MaplibreDraw(drawOptions);
 
 // Add the Draw control to your map
 map.addControl(draw);
 ```
 
-**Draw only works after the Mapbox GL JS map has loaded**, so you must interact with Draw only *after* your map's `load` event:
+**Draw only works after the Maplibre GL JS map has loaded**, so you must interact with Draw only *after* your map's `load` event:
 
 ```js
 map.on('load', function() {
@@ -33,14 +33,14 @@ All of the following options are optional.
 - `controls`, Object: Hide or show individual controls. Each property's name is a control, and value is a boolean indicating whether the control is on or off. Available control names are `point`, `line_string`, `polygon`, `trash`, `combine_features` and `uncombine_features`. By default, all controls are on. To change that default, use `displayControlsDefault`.
 - `displayControlsDefault`, boolean (default: `true`): The default value for `controls`. For example, if you would like all controls to be *off* by default, and specify an allowed list with `controls`, use `displayControlsDefault: false`.
 - `styles`, Array\<Object\>: An array of map style objects. By default, Draw provides a map style for you. To learn about overriding styles, see the [Styling Draw](#styling-draw) section below.
-- `modes`, Object: over ride the default modes with your own. `MapboxDraw.modes` can be used to see the default values. More information on custom modes [can be found here](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/MODES.md).
+- `modes`, Object: over ride the default modes with your own. `MaplibreDraw.modes` can be used to see the default values. More information on custom modes [can be found here](https://github.com/esdmr/maplibre-gl-draw/blob/main/docs/MODES.md).
 - `defaultMode`, String (default: `'simple_select'`): the mode (from `modes`) that user will first land in.
 - `userProperties`, boolean (default: `false`): properties of a feature will also be available for styling and prefixed with `user_`, e.g., `['==', 'user_custom_label', 'Example']`
 - `suppressAPIEvents`, boolean (default: `true`): Whether or not to emit events when calling Draw API methods. If `false`, events will be emitted.
 
 ## Modes
 
-By default MapboxDraw ships with a few modes. These modes aim to cover the basic needed functionally for MapboxDraw to create the core GeoJSON feature types. Along with these, MapboxDraw also supports [custom modes. Click here for more details](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/MODES.md).
+By default MaplibreDraw ships with a few modes. These modes aim to cover the basic needed functionally for MaplibreDraw to create the core GeoJSON feature types. Along with these, MaplibreDraw also supports [custom modes. Click here for more details](https://github.com/esdmr/maplibre-gl-draw/blob/main/docs/MODES.md).
 
 The mode name strings are available as an enum at `Draw.modes`.
 
@@ -84,7 +84,7 @@ Lets you draw a Point feature.
 
 ## API Methods
 
-`new MapboxDraw()` returns an instance of Draw with the following API:
+`new MaplibreDraw()` returns an instance of Draw with the following API:
 
 ### `add(geojson: Object) => Array<string>`
 
@@ -360,7 +360,7 @@ This is helpful if you are using Draw's features as your primary data store in y
 
 ## Events
 
-Draw fires a number of events. All of these events are namespaced with `draw.` and are emitted from the Mapbox GL JS map object. All events are all triggered by user interaction.
+Draw fires a number of events. All of these events are namespaced with `draw.` and are emitted from the Maplibre GL JS map object. All events are all triggered by user interaction.
 
 ```js
 map.on('draw.create', function (e) {
@@ -503,7 +503,7 @@ The event data is an object with the following shape:
 
 ### `draw.render`
 
-Fired just after Draw calls `setData()` on the Mapbox GL JS map. This does not imply that the set data call has finished updating the map, just that the map is being updated.
+Fired just after Draw calls `setData()` on the Maplibre GL JS map. This does not imply that the set data call has finished updating the map, just that the map is being updated.
 
 
 ### `draw.actionable`
@@ -522,7 +522,7 @@ Fired as the state of Draw changes to enable and disable different actions. Foll
 
 ## Styling Draw
 
-Draw uses a map style that adheres to the [Mapbox GL Style Spec](https://www.mapbox.com/mapbox-gl-style-spec/) with a few caveats.
+Draw uses a map style that adheres to the [Maplibre Style Spec](https://maplibre.org/maplibre-style-spec/sources/) with a few caveats.
 
 **source**
 
@@ -530,7 +530,7 @@ The GL Style Spec requires each layer to have a source. However, **do not provid
 
 Draw moves features between sources in order to fine-tune performance. Because of this, **Draw will provide a `source` for you automatically**.
 
-The `source`s that Draw provides are named `mapbox-gl-draw-hot` and `mapbox-gl-draw-cold`.
+The `source`s that Draw provides are named `maplibre-gl-draw-hot` and `maplibre-gl-draw-cold`.
 
 **id**
 
@@ -544,15 +544,15 @@ meta | feature, midpoint, vertex | `midpoint` and `vertex` are used on points ad
 active | true, false | A feature is active when it is 'selected' in the current mode. `true` and `false` are strings.
 mode |  simple_select, direct_select, draw_point, draw_line_string, draw_polygon | Indicates which mode Draw is currently in.
 
-Draw also provides a few more properties on features, but they should not be used for styling. For details on them, see "Using Draw with Mapbox GL JS's `queryRenderedFeatures`" below.
+Draw also provides a few more properties on features, but they should not be used for styling. For details on them, see "Using Draw with Maplibre GL JS's `queryRenderedFeatures`" below.
 
 If `opts.userProperties` is set to `true` the properties of a feature will also be available for styling. All user properties are prefixed with `user_` to make sure they do not clash with the Draw properties.
 
 ### Example Custom Styles
 
-See [EXAMPLES.md](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/EXAMPLES.md) for examples of custom styles.
+See [EXAMPLES.md](https://github.com/esdmr/maplibre-gl-draw/blob/main/docs/EXAMPLES.md) for examples of custom styles.
 
-## Using Draw with Mapbox GL JS's `queryRenderedFeatures`
+## Using Draw with Maplibre GL JS's `queryRenderedFeatures`
 
 property | values | function
 --- | --- | ---

@@ -1,7 +1,7 @@
 export default {
   root: 'debug/',
   base: '/debug/',
-  envPrefix: 'MAPBOX_',
+  envPrefix: 'MAPLIBRE_',
   server: {
     host: '0.0.0.0',
     port: 9967,

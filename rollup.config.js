@@ -1,6 +1,6 @@
 const {MINIFY} = process.env;
 const minified = MINIFY === 'true';
-const outputFile = minified ? 'dist/mapbox-gl-draw.js' : 'dist/mapbox-gl-draw-unminified.js';
+const outputFile = minified ? 'dist/maplibre-gl-draw.js' : 'dist/maplibre-gl-draw-unminified.js';
 
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
@@ -9,7 +9,7 @@ import terser from '@rollup/plugin-terser';
 export default {
   input: ['index.js'],
   output: {
-    name: 'MapboxDraw',
+    name: 'MaplibreDraw',
     file: outputFile,
     format: 'umd',
     sourcemap: true,
@@ -26,8 +26,7 @@ export default {
       preferBuiltins: true
     }),
     commonjs({
-      // global keyword handling causes Webpack compatibility issues, so we disabled it:
-      // https://github.com/mapbox/mapbox-gl-js/pull/6956
+      // global keyword handling causes Webpack compatibility issues, so we disabled it
       ignoreGlobal: true
     })
   ],

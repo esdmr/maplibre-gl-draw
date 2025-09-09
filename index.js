@@ -25,12 +25,12 @@ const setupDraw = function(options, api) {
   return api;
 };
 
-function MapboxDraw(options) {
+function MaplibreDraw(options) {
   setupDraw(options, this);
 }
 
-MapboxDraw.modes = modes;
-MapboxDraw.constants = Constants;
-MapboxDraw.lib = lib;
+MaplibreDraw.modes = modes;
+MaplibreDraw.constants = Constants;
+MaplibreDraw.lib = lib;
 
-export default MapboxDraw;
+export default MaplibreDraw;

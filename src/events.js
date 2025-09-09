@@ -103,7 +103,7 @@ export default function(ctx) {
 
   events.touchend = function(event) {
     // Prevent emulated mouse events because we will fully handle the touch here.
-    // This does not stop the touch events from propogating to mapbox though.
+    // This does not stop the touch events from propogating to maplibre though.
     event.originalEvent.preventDefault();
     if (!ctx.options.touchEnabled) {
       return;

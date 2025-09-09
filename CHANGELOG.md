@@ -137,7 +137,7 @@
 
 - Adds [Custom Mode support](https://github.com/mapbox/mapbox-gl-draw/blob/main/docs/MODES.md)
 - Drops `static` mode, which can now be found [in its own repo](https://github.com/mapbox/mapbox-gl-draw-static-mode)
-- Fixes bug where `MapboxDraw` would prevent `MapboxGeocoder` delete actions (#673)
+- Fixes bug where `MaplibreDraw` would prevent `MapboxGeocoder` delete actions (#673)
 
 ## 0.19.1
 
@@ -175,8 +175,8 @@
 
 #### ⚠️ Breaking changes ⚠️
 
-- Changes `mapboxglDraw` to `MapboxDraw` to match other control names.
-- Changes `MapboxDraw()` to `new MapboxDraw()` to match other control interfaces.
+- Changes `mapboxglDraw` to `MaplibreDraw` to match other control names.
+- Changes `MaplibreDraw()` to `new MaplibreDraw()` to match other control interfaces.
 - Provides clearer icon support for drag feature in `direct_select`.
 
 ## 0.15.0

@@ -1,23 +1,23 @@
 export const classes = /** @type {const} */ ({
   CANVAS: 'maplibre-canvas',
-  CONTROL_BASE: 'maplibre-ctrl',
-  CONTROL_PREFIX: 'maplibre-ctrl-',
-  CONTROL_BUTTON: 'maplibre-gl-draw_ctrl-draw-btn',
-  CONTROL_BUTTON_LINE: 'maplibre-gl-draw_line',
-  CONTROL_BUTTON_POLYGON: 'maplibre-gl-draw_polygon',
-  CONTROL_BUTTON_POINT: 'maplibre-gl-draw_point',
-  CONTROL_BUTTON_TRASH: 'maplibre-gl-draw_trash',
-  CONTROL_BUTTON_COMBINE_FEATURES: 'maplibre-gl-draw_combine',
-  CONTROL_BUTTON_UNCOMBINE_FEATURES: 'maplibre-gl-draw_uncombine',
-  CONTROL_GROUP: 'maplibre-ctrl-group',
-  ATTRIBUTION: 'maplibre-ctrl-attrib',
+  CONTROL_BASE: 'maplibregl-ctrl',
+  CONTROL_PREFIX: 'maplibregl-ctrl-',
+  CONTROL_BUTTON: 'maplibregl-draw_ctrl-draw-btn',
+  CONTROL_BUTTON_LINE: 'maplibregl-draw_line',
+  CONTROL_BUTTON_POLYGON: 'maplibregl-draw_polygon',
+  CONTROL_BUTTON_POINT: 'maplibregl-draw_point',
+  CONTROL_BUTTON_TRASH: 'maplibregl-draw_trash',
+  CONTROL_BUTTON_COMBINE_FEATURES: 'maplibregl-draw_combine',
+  CONTROL_BUTTON_UNCOMBINE_FEATURES: 'maplibregl-draw_uncombine',
+  CONTROL_GROUP: 'maplibregl-ctrl-group',
+  ATTRIBUTION: 'maplibregl-ctrl-attrib',
   ACTIVE_BUTTON: 'active',
-  BOX_SELECT: 'maplibre-gl-draw_boxselect'
+  BOX_SELECT: 'maplibregl-draw_boxselect'
 });
 
 export const sources = /** @type {const} */ ({
-  HOT: 'maplibre-gl-draw-hot',
-  COLD: 'maplibre-gl-draw-cold'
+  HOT: 'maplibregl-draw-hot',
+  COLD: 'maplibregl-draw-cold'
 });
 
 export const cursors = /** @type {const} */ ({

@@ -7,9 +7,9 @@ import * as Constants from '../constants.js';
  * @param {Record<string, unknown>} options
  * @param {string | null} basePath
  */
-function createSupplementaryPoints(geojson, options = {}, basePath = null) {
-  const { type, coordinates } = geojson.geometry;
-  const featureId = geojson.properties && geojson.properties.id;
+function createSupplementaryPoints({geometry, properties}, options = {}, basePath = null) {
+  const { type, coordinates } = geometry;
+  const featureId = properties && properties.id;
 
   let supplementaryPoints = [];
 
@@ -61,7 +61,7 @@ function createSupplementaryPoints(geojson, options = {}, basePath = null) {
 
   function isSelectedPath(path) {
     if (!Array.isArray(options.selectedPaths)) return false;
-    return options.selectedPaths.indexOf(path) !== -1;
+    return options.selectedPaths.includes(path);
   }
 
   // Split a multi-geometry into constituent
@@ -77,7 +77,7 @@ function createSupplementaryPoints(geojson, options = {}, basePath = null) {
     ).forEach((subCoordinates, index) => {
       const subFeature = {
         type: Constants.geojsonTypes.FEATURE,
-        properties: geojson.properties,
+        properties: properties,
         geometry: {
           type: subType,
           coordinates: subCoordinates

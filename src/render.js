@@ -17,14 +17,14 @@ export default function render() {
     newColdIds = store.getAllIds();
   } else {
     newHotIds = store.getChangedIds().filter(id => store.get(id) !== undefined);
-    newColdIds = store.sources.hot.filter(geojson => geojson.properties.id && newHotIds.indexOf(geojson.properties.id) === -1 && store.get(geojson.properties.id) !== undefined).map(geojson => geojson.properties.id);
+    newColdIds = store.sources.hot.filter(({properties}) => properties.id && !newHotIds.includes(properties.id) && store.get(properties.id) !== undefined).map(({properties}) => properties.id);
   }
 
   store.sources.hot = [];
   const lastColdCount = store.sources.cold.length;
-  store.sources.cold = store.isDirty ? [] : store.sources.cold.filter((geojson) => {
-    const id = geojson.properties.id || geojson.properties.parent;
-    return newHotIds.indexOf(id) === -1;
+  store.sources.cold = store.isDirty ? [] : store.sources.cold.filter(({properties}) => {
+    const id = properties.id || properties.parent;
+    return !newHotIds.includes(id);
   });
 
   const coldChanged = lastColdCount !== store.sources.cold.length || newColdIds.length > 0;

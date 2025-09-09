@@ -1,5 +1,5 @@
 
-const ModeHandler = (mode, DrawContext) => {
+const ModeHandler = (mode, {store, ui}) => {
 
   const handlers = {
     drag: [],
@@ -27,7 +27,7 @@ const ModeHandler = (mode, DrawContext) => {
       });
     },
     render(id) {
-      DrawContext.store.featureChanged(id);
+      store.featureChanged(id);
     }
   };
 
@@ -39,9 +39,9 @@ const ModeHandler = (mode, DrawContext) => {
       if (handle.selector(event)) {
         const skipRender = handle.fn.call(ctx, event);
         if (!skipRender) {
-          DrawContext.store.render();
+          store.render();
         }
-        DrawContext.ui.updateMapClasses();
+        ui.updateMapClasses();
 
         // ensure an event is only handled once
         // we do this to let modes have multiple overlapping selectors
@@ -61,7 +61,7 @@ const ModeHandler = (mode, DrawContext) => {
     trash() {
       if (mode.trash) {
         mode.trash();
-        DrawContext.store.render();
+        store.render();
       }
     },
     combineFeatures() {

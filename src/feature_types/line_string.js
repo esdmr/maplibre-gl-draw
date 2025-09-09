@@ -1,35 +1,31 @@
 import Feature from './feature.js';
 
-const LineString = function(ctx, geojson) {
-  Feature.call(this, ctx, geojson);
-};
+class LineString extends Feature {
+  isValid() {
+    return this.coordinates.length > 1;
+  }
 
-LineString.prototype = Object.create(Feature.prototype);
+  addCoordinate(path, lng, lat) {
+    this.changed();
+    const id = parseInt(path, 10);
+    this.coordinates.splice(id, 0, [lng, lat]);
+  }
 
-LineString.prototype.isValid = function() {
-  return this.coordinates.length > 1;
-};
+  getCoordinate(path) {
+    const id = parseInt(path, 10);
+    return JSON.parse(JSON.stringify(this.coordinates[id]));
+  }
 
-LineString.prototype.addCoordinate = function(path, lng, lat) {
-  this.changed();
-  const id = parseInt(path, 10);
-  this.coordinates.splice(id, 0, [lng, lat]);
-};
+  removeCoordinate(path) {
+    this.changed();
+    this.coordinates.splice(parseInt(path, 10), 1);
+  }
 
-LineString.prototype.getCoordinate = function(path) {
-  const id = parseInt(path, 10);
-  return JSON.parse(JSON.stringify(this.coordinates[id]));
-};
-
-LineString.prototype.removeCoordinate = function(path) {
-  this.changed();
-  this.coordinates.splice(parseInt(path, 10), 1);
-};
-
-LineString.prototype.updateCoordinate = function(path, lng, lat) {
-  const id = parseInt(path, 10);
-  this.coordinates[id] = [lng, lat];
-  this.changed();
-};
+  updateCoordinate(path, lng, lat) {
+    const id = parseInt(path, 10);
+    this.coordinates[id] = [lng, lat];
+    this.changed();
+  }
+}
 
 export default LineString;

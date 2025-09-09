@@ -28,7 +28,7 @@ export default function(ctx, api) {
 
   api.getFeatureIdsAt = point => {
     const features = featuresAt.click({ point }, null, ctx);
-    return features.map(feature => feature.properties.id);
+    return features.map(({properties}) => properties.id);
   };
 
   api.getSelectedIds = () => ctx.store.getSelectedIds();
@@ -41,12 +41,13 @@ export default function(ctx, api) {
   api.getSelectedPoints = () => ({
     type: Constants.geojsonTypes.FEATURE_COLLECTION,
 
-    features: ctx.store.getSelectedCoordinates().map(coordinate => ({
+    features: ctx.store.getSelectedCoordinates().map(({coordinates}) => ({
       type: Constants.geojsonTypes.FEATURE,
       properties: {},
+
       geometry: {
         type: Constants.geojsonTypes.POINT,
-        coordinates: coordinate.coordinates
+        coordinates: coordinates
       }
     }))
   });

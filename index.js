@@ -5,32 +5,29 @@ import modes from './src/modes/index.js';
 import * as Constants from './src/constants.js';
 import * as lib from './src/lib/index.js';
 
-const setupDraw = function(options, api) {
-  options = setupOptions(options);
 
-  const ctx = {
-    options
-  };
+class MaplibreDraw {
+  static modes = modes;
+  static constants = Constants;
+  static lib = lib;
 
-  api = setupAPI(ctx, api);
-  ctx.api = api;
+  constructor(options) {
+    options = setupOptions(options);
 
-  const setup = runSetup(ctx);
+    const ctx = {
+      options,
+      api: this,
+    };
 
-  api.onAdd = setup.onAdd;
-  api.onRemove = setup.onRemove;
-  api.types = Constants.types;
-  api.options = options;
+    setupAPI(ctx, this);
 
-  return api;
-};
+    const setup = runSetup(ctx);
 
-function MaplibreDraw(options) {
-  setupDraw(options, this);
+    this.onAdd = setup.onAdd;
+    this.onRemove = setup.onRemove;
+    this.types = Constants.types;
+    this.options = options;
+  }
 }
-
-MaplibreDraw.modes = modes;
-MaplibreDraw.constants = Constants;
-MaplibreDraw.lib = lib;
 
 export default MaplibreDraw;

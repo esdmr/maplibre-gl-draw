@@ -9,34 +9,34 @@ export function isOfMetaType(type) {
   };
 }
 
-export function isShiftMousedown(e) {
-  if (!e.originalEvent) return false;
-  if (!e.originalEvent.shiftKey) return false;
-  return e.originalEvent.button === 0;
+export function isShiftMousedown({originalEvent}) {
+  if (!originalEvent) return false;
+  if (!originalEvent.shiftKey) return false;
+  return originalEvent.button === 0;
 }
 
-export function isActiveFeature(e) {
-  if (!e.featureTarget) return false;
-  if (!e.featureTarget.properties) return false;
-  return e.featureTarget.properties.active === Constants.activeStates.ACTIVE &&
-    e.featureTarget.properties.meta === Constants.meta.FEATURE;
+export function isActiveFeature({featureTarget}) {
+  if (!featureTarget) return false;
+  if (!featureTarget.properties) return false;
+  return featureTarget.properties.active === Constants.activeStates.ACTIVE &&
+    featureTarget.properties.meta === Constants.meta.FEATURE;
 }
 
-export function isInactiveFeature(e) {
-  if (!e.featureTarget) return false;
-  if (!e.featureTarget.properties) return false;
-  return e.featureTarget.properties.active === Constants.activeStates.INACTIVE &&
-    e.featureTarget.properties.meta === Constants.meta.FEATURE;
+export function isInactiveFeature({featureTarget}) {
+  if (!featureTarget) return false;
+  if (!featureTarget.properties) return false;
+  return featureTarget.properties.active === Constants.activeStates.INACTIVE &&
+    featureTarget.properties.meta === Constants.meta.FEATURE;
 }
 
-export function noTarget(e) {
-  return e.featureTarget === undefined;
+export function noTarget({featureTarget}) {
+  return featureTarget === undefined;
 }
 
-export function isFeature(e) {
-  if (!e.featureTarget) return false;
-  if (!e.featureTarget.properties) return false;
-  return e.featureTarget.properties.meta === Constants.meta.FEATURE;
+export function isFeature({featureTarget}) {
+  if (!featureTarget) return false;
+  if (!featureTarget.properties) return false;
+  return featureTarget.properties.meta === Constants.meta.FEATURE;
 }
 
 export function isVertex(e) {
@@ -46,37 +46,37 @@ export function isVertex(e) {
   return featureTarget.properties.meta === Constants.meta.VERTEX;
 }
 
-export function isShiftDown(e) {
-  if (!e.originalEvent) return false;
-  return e.originalEvent.shiftKey === true;
+export function isShiftDown({originalEvent}) {
+  if (!originalEvent) return false;
+  return originalEvent.shiftKey === true;
 }
 
-export function isEscapeKey(e) {
-  return e.key === 'Escape' || e.keyCode === 27;
+export function isEscapeKey({key, keyCode}) {
+  return key === 'Escape' || keyCode === 27;
 }
 
-export function isEnterKey(e) {
-  return e.key === 'Enter' || e.keyCode === 13;
+export function isEnterKey({key, keyCode}) {
+  return key === 'Enter' || keyCode === 13;
 }
 
-export function isBackspaceKey(e) {
-  return e.key === 'Backspace' || e.keyCode === 8;
+export function isBackspaceKey({key, keyCode}) {
+  return key === 'Backspace' || keyCode === 8;
 }
 
-export function isDeleteKey(e) {
-  return e.key === 'Delete' || e.keyCode === 46;
+export function isDeleteKey({key, keyCode}) {
+  return key === 'Delete' || keyCode === 46;
 }
 
-export function isDigit1Key(e) {
-  return e.key === '1' || e.keyCode === 49;
+export function isDigit1Key({key, keyCode}) {
+  return key === '1' || keyCode === 49;
 }
 
-export function isDigit2Key(e) {
-  return e.key === '2' || e.keyCode === 50;
+export function isDigit2Key({key, keyCode}) {
+  return key === '2' || keyCode === 50;
 }
 
-export function isDigit3Key(e) {
-  return e.key === '3' || e.keyCode === 51;
+export function isDigit3Key({key, keyCode}) {
+  return key === '3' || keyCode === 51;
 }
 
 export function isDigitKey(e) {

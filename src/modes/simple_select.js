@@ -8,7 +8,7 @@ import * as Constants from '../constants.js';
 
 const SimpleSelect = {};
 
-SimpleSelect.onSetup = function(opts) {
+SimpleSelect.onSetup = function({featureIds}) {
   // turn the opts into state.
   const state = {
     dragMoveLocation: null,
@@ -19,7 +19,7 @@ SimpleSelect.onSetup = function(opts) {
     dragMoving: false,
     canDragMove: false,
     initialDragPanState: this.map.dragPan.isEnabled(),
-    initiallySelectedFeatureIds: opts.featureIds || []
+    initiallySelectedFeatureIds: featureIds || []
   };
 
   this.setSelected(state.initiallySelectedFeatureIds.filter(id => this.getFeature(id) !== undefined));
@@ -53,8 +53,8 @@ SimpleSelect.fireActionable = function() {
   if (selectedFeatures.length > 1) {
     combineFeatures = true;
     const featureType = selectedFeatures[0].type.replace('Multi', '');
-    selectedFeatures.forEach((feature) => {
-      if (feature.type.replace('Multi', '') !== featureType) {
+    selectedFeatures.forEach(({type}) => {
+      if (type.replace('Multi', '') !== featureType) {
         combineFeatures = false;
       }
     });
@@ -70,7 +70,7 @@ SimpleSelect.fireActionable = function() {
 
 SimpleSelect.getUniqueIds = allFeatures => {
   if (!allFeatures.length) return [];
-  const ids = allFeatures.map(s => s.properties.id)
+  const ids = allFeatures.map(({properties}) => properties.id)
     .filter(id => id !== undefined)
     .reduce((memo, id) => {
       memo.add(id);
@@ -115,9 +115,9 @@ SimpleSelect.onMouseMove = function(state, e) {
   return true;
 };
 
-SimpleSelect.onMouseOut = function(state) {
+SimpleSelect.onMouseOut = function({dragMoving}) {
   // As soon as you mouse leaves the canvas, update the feature
-  if (state.dragMoving) return this.fireUpdate();
+  if (dragMoving) return this.fireUpdate();
 
   // Skip render
   return true;
@@ -141,17 +141,17 @@ SimpleSelect.clickAnywhere = function (state) {
   this.stopExtendedInteractions(state);
 };
 
-SimpleSelect.clickOnVertex = function(state, e) {
+SimpleSelect.clickOnVertex = function(state, {featureTarget, lngLat}) {
   // Enter direct select mode
   this.changeMode(Constants.modes.DIRECT_SELECT, {
-    featureId: e.featureTarget.properties.parent,
-    coordPath: e.featureTarget.properties.coord_path,
-    startPos: e.lngLat
+    featureId: featureTarget.properties.parent,
+    coordPath: featureTarget.properties.coord_path,
+    startPos: lngLat
   });
   this.updateUIClasses({ mouse: Constants.cursors.MOVE });
 };
 
-SimpleSelect.startOnActiveFeature = function(state, e) {
+SimpleSelect.startOnActiveFeature = function(state, {featureTarget, lngLat}) {
   // Stop any already-underway extended interactions
   this.stopExtendedInteractions(state);
 
@@ -159,11 +159,11 @@ SimpleSelect.startOnActiveFeature = function(state, e) {
   this.map.dragPan.disable();
 
   // Re-render it and enable drag move
-  this.doRender(e.featureTarget.properties.id);
+  this.doRender(featureTarget.properties.id);
 
   // Set up the state for drag moving
   state.canDragMove = true;
-  state.dragMoveLocation = e.lngLat;
+  state.dragMoveLocation = lngLat;
 };
 
 SimpleSelect.clickOnFeature = function(state, e) {
@@ -215,11 +215,11 @@ SimpleSelect.onMouseDown = function(state, e) {
   if (this.drawConfig.boxSelect && CommonSelectors.isShiftMousedown(e)) return this.startBoxSelect(state, e);
 };
 
-SimpleSelect.startBoxSelect = function(state, e) {
+SimpleSelect.startBoxSelect = function(state, {originalEvent}) {
   this.stopExtendedInteractions(state);
   this.map.dragPan.disable();
   // Enable box select
-  state.boxSelectStartLocation = mouseEventPoint(e.originalEvent, this.map.getContainer());
+  state.boxSelectStartLocation = mouseEventPoint(originalEvent, this.map.getContainer());
   state.canBoxSelect = true;
 };
 
@@ -232,7 +232,7 @@ SimpleSelect.onDrag = function(state, e) {
   if (this.drawConfig.boxSelect && state.canBoxSelect) return this.whileBoxSelect(state, e);
 };
 
-SimpleSelect.whileBoxSelect = function(state, e) {
+SimpleSelect.whileBoxSelect = function(state, {originalEvent}) {
   state.boxSelecting = true;
   this.updateUIClasses({ mouse: Constants.cursors.ADD });
 
@@ -244,7 +244,7 @@ SimpleSelect.whileBoxSelect = function(state, e) {
   }
 
   // Adjust the box node's width and xy position
-  const current = mouseEventPoint(e.originalEvent, this.map.getContainer());
+  const current = mouseEventPoint(originalEvent, this.map.getContainer());
   const minX = Math.min(state.boxSelectStartLocation.x, current.x);
   const maxX = Math.max(state.boxSelectStartLocation.x, current.x);
   const minY = Math.min(state.boxSelectStartLocation.y, current.y);
@@ -256,29 +256,29 @@ SimpleSelect.whileBoxSelect = function(state, e) {
   state.boxSelectElement.style.height = `${maxY - minY}px`;
 };
 
-SimpleSelect.dragMove = function(state, e) {
+SimpleSelect.dragMove = function(state, {originalEvent, lngLat}) {
   // Dragging when drag move is enabled
   state.dragMoving = true;
-  e.originalEvent.stopPropagation();
+  originalEvent.stopPropagation();
 
   const delta = {
-    lng: e.lngLat.lng - state.dragMoveLocation.lng,
-    lat: e.lngLat.lat - state.dragMoveLocation.lat
+    lng: lngLat.lng - state.dragMoveLocation.lng,
+    lat: lngLat.lat - state.dragMoveLocation.lat
   };
 
   moveFeatures(this.getSelected(), delta);
 
-  state.dragMoveLocation = e.lngLat;
+  state.dragMoveLocation = lngLat;
 };
 
-SimpleSelect.onTouchEnd = SimpleSelect.onMouseUp = function(state, e) {
+SimpleSelect.onTouchEnd = SimpleSelect.onMouseUp = function(state, {originalEvent}) {
   // End any extended interactions
   if (state.dragMoving) {
     this.fireUpdate();
   } else if (state.boxSelecting) {
     const bbox = [
       state.boxSelectStartLocation,
-      mouseEventPoint(e.originalEvent, this.map.getContainer())
+      mouseEventPoint(originalEvent, this.map.getContainer())
     ];
     const featuresInBox = this.featuresAt(null, bbox, 'click');
     const idsToSelect = this.getUniqueIds(featuresInBox)
@@ -308,7 +308,7 @@ SimpleSelect.onTrash = function() {
   this.fireActionable();
 };
 
-SimpleSelect.onCombineFeatures = function() {
+SimpleSelect.onCombineFeature = function() {
   const selectedFeatures = this.getSelected();
 
   if (selectedFeatures.length === 0 || selectedFeatures.length < 2) return;
@@ -354,7 +354,7 @@ SimpleSelect.onCombineFeatures = function() {
   this.fireActionable();
 };
 
-SimpleSelect.onUncombineFeatures = function() {
+SimpleSelect.onUncombineFeature = function() {
   const selectedFeatures = this.getSelected();
   if (selectedFeatures.length === 0) return;
 

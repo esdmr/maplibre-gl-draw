@@ -42,12 +42,12 @@ DrawPolygon.clickAnywhere = function(state, e) {
   state.polygon.updateCoordinate(`0.${state.currentVertexPosition}`, e.lngLat.lng, e.lngLat.lat);
 };
 
-DrawPolygon.clickOnVertex = function(state) {
-  return this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [state.polygon.id] });
+DrawPolygon.clickOnVertex = function({polygon}) {
+  return this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [polygon.id] });
 };
 
-DrawPolygon.onMouseMove = function(state, e) {
-  state.polygon.updateCoordinate(`0.${state.currentVertexPosition}`, e.lngLat.lng, e.lngLat.lat);
+DrawPolygon.onMouseMove = function({polygon, currentVertexPosition}, e) {
+  polygon.updateCoordinate(`0.${currentVertexPosition}`, e.lngLat.lng, e.lngLat.lat);
   if (CommonSelectors.isVertex(e)) {
     this.updateUIClasses({ mouse: Constants.cursors.POINTER });
   }
@@ -58,37 +58,37 @@ DrawPolygon.onTap = DrawPolygon.onClick = function(state, e) {
   return this.clickAnywhere(state, e);
 };
 
-DrawPolygon.onKeyUp = function(state, e) {
+DrawPolygon.onKeyUp = function({polygon}, e) {
   if (CommonSelectors.isEscapeKey(e)) {
-    this.deleteFeature([state.polygon.id], { silent: true });
+    this.deleteFeature([polygon.id], { silent: true });
     this.changeMode(Constants.modes.SIMPLE_SELECT);
   } else if (CommonSelectors.isEnterKey(e)) {
-    this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [state.polygon.id] });
+    this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [polygon.id] });
   }
 };
 
-DrawPolygon.onStop = function(state) {
+DrawPolygon.onStop = function({polygon, currentVertexPosition}) {
   this.updateUIClasses({ mouse: Constants.cursors.NONE });
   doubleClickZoom.enable(this);
   this.activateUIButton();
 
   // check to see if we've deleted this feature
-  if (this.getFeature(state.polygon.id) === undefined) return;
+  if (this.getFeature(polygon.id) === undefined) return;
 
   //remove last added coordinate
-  state.polygon.removeCoordinate(`0.${state.currentVertexPosition}`);
-  if (state.polygon.isValid()) {
+  polygon.removeCoordinate(`0.${currentVertexPosition}`);
+  if (polygon.isValid()) {
     this.fire(Constants.events.CREATE, {
-      features: [state.polygon.toGeoJSON()]
+      features: [polygon.toGeoJSON()]
     });
   } else {
-    this.deleteFeature([state.polygon.id], { silent: true });
+    this.deleteFeature([polygon.id], { silent: true });
     this.changeMode(Constants.modes.SIMPLE_SELECT, {}, { silent: true });
   }
 };
 
-DrawPolygon.toDisplayFeatures = (state, geojson, display) => {
-  const isActivePolygon = geojson.properties.id === state.polygon.id;
+DrawPolygon.toDisplayFeatures = ({polygon}, geojson, display) => {
+  const isActivePolygon = geojson.properties.id === polygon.id;
   geojson.properties.active = (isActivePolygon) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
   if (!isActivePolygon) return display(geojson);
 
@@ -103,12 +103,12 @@ DrawPolygon.toDisplayFeatures = (state, geojson, display) => {
     return;
   }
   geojson.properties.meta = Constants.meta.FEATURE;
-  display(createVertex(state.polygon.id, geojson.geometry.coordinates[0][0], '0.0', false));
+  display(createVertex(polygon.id, geojson.geometry.coordinates[0][0], '0.0', false));
   if (coordinateCount > 3) {
     // Add a start position marker to the map, clicking on this will finish the feature
     // This should only be shown when we're in a valid spot
     const endPos = geojson.geometry.coordinates[0].length - 3;
-    display(createVertex(state.polygon.id, geojson.geometry.coordinates[0][endPos], `0.${endPos}`, false));
+    display(createVertex(polygon.id, geojson.geometry.coordinates[0][endPos], `0.${endPos}`, false));
   }
   if (coordinateCount <= 4) {
     // If we've only drawn two positions (plus the closer),
@@ -133,8 +133,8 @@ DrawPolygon.toDisplayFeatures = (state, geojson, display) => {
   return display(geojson);
 };
 
-DrawPolygon.onTrash = function(state) {
-  this.deleteFeature([state.polygon.id], { silent: true });
+DrawPolygon.onTrash = function({polygon}) {
+  this.deleteFeature([polygon.id], { silent: true });
   this.changeMode(Constants.modes.SIMPLE_SELECT);
 };
 

@@ -156,10 +156,10 @@ export default function(ctx) {
     ctx.store.changeZoom();
   };
 
-  events.data = event => {
-    if (event.dataType === 'style') {
+  events.data = ({dataType}) => {
+    if (dataType === 'style') {
       const { setup, map, options, store } = ctx;
-      const hasLayers = options.styles.some(style => map.getLayer(style.id));
+      const hasLayers = options.styles.some(({id}) => map.getLayer(id));
       if (!hasLayers) {
         setup.addLayers();
         store.setDirty();

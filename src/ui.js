@@ -2,7 +2,7 @@ import * as Constants from './constants.js';
 
 const classTypes = ['mode', 'feature', 'mouse'];
 
-export default function(ctx) {
+export default function({container, options, events}) {
 
 
   const buttonElements = {};
@@ -30,7 +30,7 @@ export default function(ctx) {
   }
 
   function updateMapClasses() {
-    if (!ctx.container) return;
+    if (!container) return;
 
     const classesToRemove = [];
     const classesToAdd = [];
@@ -45,11 +45,11 @@ export default function(ctx) {
     });
 
     if (classesToRemove.length > 0) {
-      ctx.container.classList.remove(...classesToRemove);
+      container.classList.remove(...classesToRemove);
     }
 
     if (classesToAdd.length > 0) {
-      ctx.container.classList.add(...classesToAdd);
+      container.classList.add(...classesToAdd);
     }
 
     currentMapClasses = Object.assign(currentMapClasses, nextMapClasses);
@@ -98,7 +98,7 @@ export default function(ctx) {
   }
 
   function addButtons() {
-    const controls = ctx.options.controls;
+    const controls = options.controls;
     const controlGroup = document.createElement('div');
     controlGroup.className = `${Constants.classes.CONTROL_GROUP} ${Constants.classes.CONTROL_BASE}`;
 
@@ -108,9 +108,9 @@ export default function(ctx) {
       buttonElements[Constants.types.POINT] = createControlButton(Constants.types.POINT, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_POINT,
-        title: `Marker tool ${ctx.options.keybindings ? '(1)' : ''}`,
-        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POINT),
-        onDeactivate: () => ctx.events.trash()
+        title: `Marker tool ${options.keybindings ? '(1)' : ''}`,
+        onActivate: () => events.changeMode(Constants.modes.DRAW_POINT),
+        onDeactivate: () => events.trash()
       });
     }
 
@@ -119,9 +119,9 @@ export default function(ctx) {
       buttonElements[Constants.types.LINE] = createControlButton(Constants.types.LINE, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_LINE,
-        title: `LineString tool ${ctx.options.keybindings ? '(2)' : ''}`,
-        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_LINE_STRING),
-        onDeactivate: () => ctx.events.trash()
+        title: `LineString tool ${options.keybindings ? '(2)' : ''}`,
+        onActivate: () => events.changeMode(Constants.modes.DRAW_LINE_STRING),
+        onDeactivate: () => events.trash()
       });
     }
 
@@ -129,9 +129,9 @@ export default function(ctx) {
       buttonElements[Constants.types.POLYGON] = createControlButton(Constants.types.POLYGON, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_POLYGON,
-        title: `Polygon tool ${ctx.options.keybindings ? '(3)' : ''}`,
-        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POLYGON),
-        onDeactivate: () => ctx.events.trash()
+        title: `Polygon tool ${options.keybindings ? '(3)' : ''}`,
+        onActivate: () => events.changeMode(Constants.modes.DRAW_POLYGON),
+        onDeactivate: () => events.trash()
       });
     }
 
@@ -141,7 +141,7 @@ export default function(ctx) {
         className: Constants.classes.CONTROL_BUTTON_TRASH,
         title: 'Delete',
         onActivate: () => {
-          ctx.events.trash();
+          events.trash();
         }
       });
     }
@@ -152,7 +152,7 @@ export default function(ctx) {
         className: Constants.classes.CONTROL_BUTTON_COMBINE_FEATURES,
         title: 'Combine',
         onActivate: () => {
-          ctx.events.combineFeatures();
+          events.combineFeatures();
         }
       });
     }
@@ -163,7 +163,7 @@ export default function(ctx) {
         className: Constants.classes.CONTROL_BUTTON_UNCOMBINE_FEATURES,
         title: 'Uncombine',
         onActivate: () => {
-          ctx.events.uncombineFeatures();
+          events.uncombineFeatures();
         }
       });
     }

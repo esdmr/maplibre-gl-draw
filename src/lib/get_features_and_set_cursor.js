@@ -3,6 +3,7 @@ import * as Constants from '../constants.js';
 
 export default function getFeatureAtAndSetCursors(event, ctx) {
   const features = featuresAt.click(event, null, ctx);
+  /** @type {Record<string, string>} */
   const classes = { mouse: Constants.cursors.NONE };
 
   if (features[0]) {
@@ -11,7 +12,7 @@ export default function getFeatureAtAndSetCursors(event, ctx) {
     classes.feature = features[0].properties.meta;
   }
 
-  if (ctx.events.currentModeName().indexOf('draw') !== -1) {
+  if (ctx.events.currentModeName().includes('draw')) {
     classes.mouse = Constants.cursors.ADD;
   }
 

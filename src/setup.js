@@ -98,9 +98,9 @@ export default function(ctx) {
     // Check for layers and sources before attempting to remove
     // If user adds draw control and removes it before the map is loaded, layers and sources will be missing
     removeLayers() {
-      ctx.options.styles.forEach((style) => {
-        if (ctx.map.getLayer(style.id)) {
-          ctx.map.removeLayer(style.id);
+      ctx.options.styles.forEach(({id}) => {
+        if (ctx.map.getLayer(id)) {
+          ctx.map.removeLayer(id);
         }
       });
 

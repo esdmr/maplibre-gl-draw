@@ -4,10 +4,10 @@
  * @param {import('maplibre-gl').MapMouseEvent | import('maplibre-gl').MapTouchEvent} mapEvent - Maplibre GL JS map event, with a point properties.
  * @return {Array<Array<number>>} Bounding box.
  */
-function mapEventToBoundingBox(mapEvent, buffer = 0) {
+function mapEventToBoundingBox({point}, buffer = 0) {
   return [
-    [mapEvent.point.x - buffer, mapEvent.point.y - buffer],
-    [mapEvent.point.x + buffer, mapEvent.point.y + buffer]
+    [point.x - buffer, point.y - buffer],
+    [point.x + buffer, point.y + buffer]
   ];
 }
 

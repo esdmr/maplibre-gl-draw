@@ -23,17 +23,17 @@ function featuresAtTouch(event, bbox, ctx) {
   return featuresAt(event, bbox, ctx, ctx.options.touchBuffer);
 }
 
-function featuresAt(event, bbox, ctx, buffer) {
-  if (ctx.map === null) return [];
+function featuresAt(event, bbox, {map, options}, buffer) {
+  if (map === null) return [];
 
   const box = (event) ? mapEventToBoundingBox(event, buffer) : bbox;
 
   const queryParams = {};
 
-  if (ctx.options.styles) queryParams.layers = ctx.options.styles.map(s => s.id).filter(id => ctx.map.getLayer(id) != null);
+  if (options.styles) queryParams.layers = options.styles.map(({id}) => id).filter(id => map.getLayer(id) != null);
 
-  const features = ctx.map.queryRenderedFeatures(box, queryParams)
-    .filter(feature => META_TYPES.indexOf(feature.properties.meta) !== -1);
+  const features = map.queryRenderedFeatures(box, queryParams)
+    .filter(({properties}) => META_TYPES.includes(properties.meta));
 
   const featureIds = new StringSet();
   const uniqueFeatures = [];

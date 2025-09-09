@@ -6,8 +6,7 @@ import createVertex from '../lib/create_vertex.js';
 
 const DrawLineString = {};
 
-DrawLineString.onSetup = function(opts) {
-  opts = opts || {};
+DrawLineString.onSetup = function(opts = {}) {
   const featureId = opts.featureId;
 
   let line;
@@ -84,12 +83,12 @@ DrawLineString.clickAnywhere = function(state, e) {
   }
 };
 
-DrawLineString.clickOnVertex = function(state) {
-  return this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [state.line.id] });
+DrawLineString.clickOnVertex = function({line}) {
+  return this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [line.id] });
 };
 
-DrawLineString.onMouseMove = function(state, e) {
-  state.line.updateCoordinate(state.currentVertexPosition, e.lngLat.lng, e.lngLat.lat);
+DrawLineString.onMouseMove = function({line, currentVertexPosition}, e) {
+  line.updateCoordinate(currentVertexPosition, e.lngLat.lng, e.lngLat.lat);
   if (CommonSelectors.isVertex(e)) {
     this.updateUIClasses({ mouse: Constants.cursors.POINTER });
   }
@@ -100,50 +99,50 @@ DrawLineString.onTap = DrawLineString.onClick = function(state, e) {
   this.clickAnywhere(state, e);
 };
 
-DrawLineString.onKeyUp = function(state, e) {
+DrawLineString.onKeyUp = function({line}, e) {
   if (CommonSelectors.isEnterKey(e)) {
-    this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [state.line.id] });
+    this.changeMode(Constants.modes.SIMPLE_SELECT, { featureIds: [line.id] });
   } else if (CommonSelectors.isEscapeKey(e)) {
-    this.deleteFeature([state.line.id], { silent: true });
+    this.deleteFeature([line.id], { silent: true });
     this.changeMode(Constants.modes.SIMPLE_SELECT);
   }
 };
 
-DrawLineString.onStop = function(state) {
+DrawLineString.onStop = function({line, currentVertexPosition}) {
   doubleClickZoom.enable(this);
   this.activateUIButton();
 
   // check to see if we've deleted this feature
-  if (this.getFeature(state.line.id) === undefined) return;
+  if (this.getFeature(line.id) === undefined) return;
 
   //remove last added coordinate
-  state.line.removeCoordinate(`${state.currentVertexPosition}`);
-  if (state.line.isValid()) {
+  line.removeCoordinate(`${currentVertexPosition}`);
+  if (line.isValid()) {
     this.fire(Constants.events.CREATE, {
-      features: [state.line.toGeoJSON()]
+      features: [line.toGeoJSON()]
     });
   } else {
-    this.deleteFeature([state.line.id], { silent: true });
+    this.deleteFeature([line.id], { silent: true });
     this.changeMode(Constants.modes.SIMPLE_SELECT, {}, { silent: true });
   }
 };
 
-DrawLineString.onTrash = function(state) {
-  this.deleteFeature([state.line.id], { silent: true });
+DrawLineString.onTrash = function({line}) {
+  this.deleteFeature([line.id], { silent: true });
   this.changeMode(Constants.modes.SIMPLE_SELECT);
 };
 
-DrawLineString.toDisplayFeatures = (state, geojson, display) => {
-  const isActiveLine = geojson.properties.id === state.line.id;
+DrawLineString.toDisplayFeatures = ({line, direction}, geojson, display) => {
+  const isActiveLine = geojson.properties.id === line.id;
   geojson.properties.active = (isActiveLine) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
   if (!isActiveLine) return display(geojson);
   // Only render the line if it has at least one real coordinate
   if (geojson.geometry.coordinates.length < 2) return;
   geojson.properties.meta = Constants.meta.FEATURE;
   display(createVertex(
-    state.line.id,
-    geojson.geometry.coordinates[state.direction === 'forward' ? geojson.geometry.coordinates.length - 2 : 1],
-    `${state.direction === 'forward' ? geojson.geometry.coordinates.length - 2 : 1}`,
+    line.id,
+    geojson.geometry.coordinates[direction === 'forward' ? geojson.geometry.coordinates.length - 2 : 1],
+    `${direction === 'forward' ? geojson.geometry.coordinates.length - 2 : 1}`,
     false
   ));
 

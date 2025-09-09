@@ -8,11 +8,11 @@ import Point from '@mapbox/point-geometry';
  * @param {HTMLElement} container
  * @returns {Point}
  */
-function mouseEventPoint(mouseEvent, container) {
+function mouseEventPoint({clientX, clientY}, container) {
   const rect = container.getBoundingClientRect();
   return new Point(
-    mouseEvent.clientX - rect.left - (container.clientLeft || 0),
-    mouseEvent.clientY - rect.top - (container.clientTop || 0)
+    clientX - rect.left - (container.clientLeft || 0),
+    clientY - rect.top - (container.clientTop || 0)
   );
 }
 

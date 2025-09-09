@@ -8,7 +8,7 @@ const {
   LNG_MIN,
   LNG_MAX,
 } = Constants;
-function extent(feature) {
+function extent({geometry}) {
   const depth = {
     Point: 0,
     LineString: 1,
@@ -16,9 +16,9 @@ function extent(feature) {
     MultiPoint: 1,
     MultiLineString: 2,
     MultiPolygon: 3,
-  }[feature.geometry.type];
+  }[geometry.type];
 
-  const coords = [feature.geometry.coordinates].flat(depth);
+  const coords = [geometry.coordinates].flat(depth);
   const lngs = coords.map(coord => coord[0]);
   const lats = coords.map(coord => coord[1]);
   const min = vals => Math.min.apply(null, vals);

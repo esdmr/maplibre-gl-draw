@@ -31,6 +31,7 @@
   "main": "dist/maplibre-gl-draw.js",
   "browser": "dist/maplibre-gl-draw.js",
   "style": "dist/maplibre-gl-draw.css",
+  "types": "dist/maplibre-gl-draw.d.ts",
   "scripts": {
     "build": "rollup -c",
     "build-min": "rollup -c --environment MINIFY:true",

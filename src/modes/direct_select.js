@@ -236,16 +236,16 @@ DirectSelect.onDrag = function(state, e) {
 };
 
 DirectSelect.onClick = function(state, e) {
-  if (noTarget(e)) return this.clickNoTarget(state, e);
-  if (isActiveFeature(e)) return this.clickActiveFeature(state, e);
-  if (isInactiveFeature(e)) return this.clickInactive(state, e);
+  if (noTarget(e)) return this.clickNoTarget();
+  if (isActiveFeature(e)) return this.clickActiveFeature(state);
+  if (isInactiveFeature(e)) return this.clickInactive();
   this.stopDragging(state);
 };
 
 DirectSelect.onTap = function(state, e) {
-  if (noTarget(e)) return this.clickNoTarget(state, e);
-  if (isActiveFeature(e)) return this.clickActiveFeature(state, e);
-  if (isInactiveFeature(e)) return this.clickInactive(state, e);
+  if (noTarget(e)) return this.clickNoTarget();
+  if (isActiveFeature(e)) return this.clickActiveFeature(state);
+  if (isInactiveFeature(e)) return this.clickInactive();
 };
 
 DirectSelect.onTouchEnd = DirectSelect.onMouseUp = function(state) {
@@ -256,4 +256,3 @@ DirectSelect.onTouchEnd = DirectSelect.onMouseUp = function(state) {
 };
 
 export default DirectSelect;
-

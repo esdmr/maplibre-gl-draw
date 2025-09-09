@@ -1,4 +1,4 @@
-export const classes = {
+export const classes = /** @type {const} */ ({
   CANVAS: 'maplibre-canvas',
   CONTROL_BASE: 'maplibre-ctrl',
   CONTROL_PREFIX: 'maplibre-ctrl-',
@@ -13,28 +13,28 @@ export const classes = {
   ATTRIBUTION: 'maplibre-ctrl-attrib',
   ACTIVE_BUTTON: 'active',
   BOX_SELECT: 'maplibre-gl-draw_boxselect'
-};
+});
 
-export const sources = {
+export const sources = /** @type {const} */ ({
   HOT: 'maplibre-gl-draw-hot',
   COLD: 'maplibre-gl-draw-cold'
-};
+});
 
-export const cursors = {
+export const cursors = /** @type {const} */ ({
   ADD: 'add',
   MOVE: 'move',
   DRAG: 'drag',
   POINTER: 'pointer',
   NONE: 'none'
-};
+});
 
-export const types = {
+export const types = /** @type {const} */ ({
   POLYGON: 'polygon',
   LINE: 'line_string',
   POINT: 'point'
-};
+});
 
-export const geojsonTypes = {
+export const geojsonTypes = /** @type {const} */ ({
   FEATURE: 'Feature',
   POLYGON: 'Polygon',
   LINE_STRING: 'LineString',
@@ -44,17 +44,17 @@ export const geojsonTypes = {
   MULTI_POINT: 'MultiPoint',
   MULTI_LINE_STRING: 'MultiLineString',
   MULTI_POLYGON: 'MultiPolygon'
-};
+});
 
-export const modes = {
+export const modes = /** @type {const} */ ({
   DRAW_LINE_STRING: 'draw_line_string',
   DRAW_POLYGON: 'draw_polygon',
   DRAW_POINT: 'draw_point',
   SIMPLE_SELECT: 'simple_select',
   DIRECT_SELECT: 'direct_select'
-};
+});
 
-export const events = {
+export const events = /** @type {const} */ ({
   CREATE: 'draw.create',
   DELETE: 'draw.delete',
   UPDATE: 'draw.update',
@@ -64,26 +64,26 @@ export const events = {
   RENDER: 'draw.render',
   COMBINE_FEATURES: 'draw.combine',
   UNCOMBINE_FEATURES: 'draw.uncombine'
-};
+});
 
-export const updateActions = {
+export const updateActions = /** @type {const} */ ({
   MOVE: 'move',
   CHANGE_PROPERTIES: 'change_properties',
   CHANGE_COORDINATES: 'change_coordinates'
-};
+});
 
-export const meta = {
+export const meta = /** @type {const} */ ({
   FEATURE: 'feature',
   MIDPOINT: 'midpoint',
   VERTEX: 'vertex'
-};
+});
 
-export const activeStates = {
+export const activeStates = /** @type {const} */ ({
   ACTIVE: 'true',
   INACTIVE: 'false'
-};
+});
 
-export const interactions = [
+export const interactions = /** @type {const} */ ([
   'scrollZoom',
   'boxZoom',
   'dragRotate',
@@ -91,7 +91,7 @@ export const interactions = [
   'keyboard',
   'doubleClickZoom',
   'touchZoomRotate'
-];
+]);
 
 export const LAT_MIN = -90;
 export const LAT_RENDERED_MIN = -85;

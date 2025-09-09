@@ -46,6 +46,7 @@ function addSources(styles, sourceBucket) {
   });
 }
 
+/** @param {Record<string, unknown>} options */
 export default function(options = {}) {
   let withDefaults = Object.assign({}, options);
 

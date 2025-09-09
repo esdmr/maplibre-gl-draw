@@ -5,7 +5,7 @@ import Point from '@mapbox/point-geometry';
  * relative to a containing element.
  *
  * @param {MouseEvent} mouseEvent
- * @param {Node} container
+ * @param {HTMLElement} container
  * @returns {Point}
  */
 function mouseEventPoint(mouseEvent, container) {

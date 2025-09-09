@@ -95,7 +95,7 @@ DrawLineString.onMouseMove = function(state, e) {
 };
 
 DrawLineString.onTap = DrawLineString.onClick = function(state, e) {
-  if (CommonSelectors.isVertex(e)) return this.clickOnVertex(state, e);
+  if (CommonSelectors.isVertex(e)) return this.clickOnVertex(state);
   this.clickAnywhere(state, e);
 };
 

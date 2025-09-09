@@ -58,7 +58,7 @@ DrawPoint.onTrash = DrawPoint.stopDrawingAndRemove;
 
 DrawPoint.onKeyUp = function(state, e) {
   if (CommonSelectors.isEscapeKey(e) || CommonSelectors.isEnterKey(e)) {
-    return this.stopDrawingAndRemove(state, e);
+    return this.stopDrawingAndRemove(state);
   }
 };
 

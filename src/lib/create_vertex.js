@@ -9,7 +9,7 @@ import * as Constants from '../constants.js';
  * @param {string} path - Dot-separated numbers indicating exactly
  *   where the point exists within its parent feature's coordinates.
  * @param {boolean} selected
- * @return {GeoJSON} Point
+ * @return {import('geojson').GeoJSON} Point
  */
 
 export default function(parentId, coordinates, path, selected) {

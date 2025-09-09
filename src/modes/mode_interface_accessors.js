@@ -14,7 +14,7 @@ export default function ModeInterface(ctx) {
 /**
  * Sets Draw's interal selected state
  * @name this.setSelected
- * @param {DrawFeature[]} - whats selected as a [DrawFeature](https://github.com/esdmr/maplibre-gl-draw/blob/main/src/feature_types/feature.js)
+ * @param {DrawFeature[]} features - whats selected as a [DrawFeature](https://github.com/esdmr/maplibre-gl-draw/blob/main/src/feature_types/feature.js)
  */
 ModeInterface.prototype.setSelected = function(features) {
   return this._ctx.store.setSelected(features);
@@ -182,8 +182,8 @@ ModeInterface.prototype.activateUIButton = function(name) {
 /**
  * Get the features at the location of an event object or in a bbox
  * @name this.featuresAt
- * @param {Event||NULL} event - a maplibre-gl event object
- * @param {BBOX||NULL} bbox - the area to get features from
+ * @param {Event | null} event - a maplibre-gl event object
+ * @param {import('maplibre-gl').LngLatBoundsLike | null} bbox - the area to get features from
  * @param {String} bufferType - is this `click` or `tap` event, defaults to click
  */
 ModeInterface.prototype.featuresAt = function(event, bbox, bufferType = 'click') {

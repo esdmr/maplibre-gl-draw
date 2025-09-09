@@ -119,7 +119,6 @@ Store.prototype.featureChanged = function(featureId, options = {}) {
 
 /**
  * Gets the ids of all features currently in changed state.
- * @return {Store} this
  */
 Store.prototype.getChangedIds = function() {
   return this._changedFeatureIds.values();
@@ -136,7 +135,6 @@ Store.prototype.clearChangedIds = function() {
 
 /**
  * Gets the ids of all features in the store.
- * @return {Store} this
  */
 Store.prototype.getAllIds = function() {
   return this._featureIds.values();
@@ -289,7 +287,6 @@ Store.prototype.setSelectedCoordinates = function(coordinates) {
 
 /**
  * Clears the current coordinates selection.
- * @param {Object} [options]
  * @return {Store} this
  */
 Store.prototype.clearSelectedCoordinates = function() {

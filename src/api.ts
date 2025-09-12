@@ -36,7 +36,6 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
 
   onRemove() {
     this.ctx.setup?.dispose();
-    this.ctx.setup = undefined;
   }
 
   getFeatureIdsAt(point: {x: number, y: number}) {

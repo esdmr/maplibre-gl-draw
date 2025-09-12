@@ -167,6 +167,7 @@ export default class Events<T extends Record<string, {}>> {
 
   constructor(ctx: MaplibreDrawContext<T>) {
     this.ctx = ctx;
+    ctx.setup!.events = this; // FIXME: Circular dependency nonsense...
 
     // FIXME: add base type to modes
     this.modes = Object.fromEntries(

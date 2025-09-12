@@ -26,6 +26,7 @@ function comparator(a: G.Feature & {area?: number}, b: G.Feature & {area?: numbe
 function sortFeatures(features: G.Feature[]) {
   return features.map((feature) => ({
     ...feature,
+    geometry: feature.geometry, // FIXME: geometry is a getter??
     area: feature.geometry.type === Constants.geojsonTypes.POLYGON
       ? area.geometry(feature.geometry)
       : undefined,

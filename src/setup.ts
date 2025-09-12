@@ -21,10 +21,10 @@ export default class Setup<T extends Record<string, {}>> {
     ctx.setup = this; // FIXME: Circular dependency nonsense...
 
     this.map = map;
-    this.events = new Events(this.ctx);
-    this.ui = ui(this.ctx);
     this.container = map.getContainer();
+    this.ui = ui(this.ctx);
     this.store = new Store(this.ctx);
+    this.events = new Events(this.ctx);
 
     this.controlContainer = this.ui.addButtons();
 

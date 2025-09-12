@@ -23,18 +23,18 @@
   ],
   "type": "module",
   "exports": {
-    ".": "./index.js",
-    "./index.js": "./index.js",
-    "./index.ts": "./index.js",
+    ".": "./index.ts",
+    "./index.js": "./index.ts",
+    "./index.ts": "./index.ts",
     "./src/*": "./src/*",
-    "./dist/maplibre-gl-draw-unminified.js": "./index.js",
-    "./dist/maplibre-gl-draw-unminified.ts": "./index.js",
-    "./dist/maplibre-gl-draw.js": "./index.js",
-    "./dist/maplibre-gl-draw.ts": "./index.js",
+    "./dist/maplibre-gl-draw-unminified.js": "./index.ts",
+    "./dist/maplibre-gl-draw-unminified.ts": "./index.ts",
+    "./dist/maplibre-gl-draw.js": "./index.ts",
+    "./dist/maplibre-gl-draw.ts": "./index.ts",
     "./dist/maplibre-gl-draw.css": "./dist/maplibre-gl-draw.css"
   },
   "style": "dist/maplibre-gl-draw.css",
-  "types": "index.d.ts",
+  "types": "index.ts",
   "scripts": {
     "build": "rollup -c",
     "prepublishOnly": "pnpm run build"

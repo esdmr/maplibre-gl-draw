@@ -1,7 +1,7 @@
-import type { Feature, Position } from 'geojson';
+import type * as G from 'geojson';
 import {LAT_MIN, LAT_MAX, LAT_RENDERED_MIN, LAT_RENDERED_MAX, LNG_MIN, LNG_MAX} from '../constants.js';
 
-function extent({geometry}: Feature) {
+function extent({geometry}: G.Feature) {
   if (geometry.type === 'GeometryCollection') {
     throw new TypeError('GeometryCollection was passed to maplibre-gl-draw constrain_feature_movement.extent');
   }
@@ -15,7 +15,7 @@ function extent({geometry}: Feature) {
     MultiPolygon: 3,
   }[geometry.type];
 
-  const coords = [geometry.coordinates].flat(depth) as Position[];
+  const coords = [geometry.coordinates].flat(depth) as G.Position[];
   const lngs = coords.map(coord => coord[0]);
   const lats = coords.map(coord => coord[1]);
   return [Math.min(...lngs), Math.min(...lats), Math.max(...lngs), Math.max(...lats)];
@@ -25,7 +25,7 @@ function extent({geometry}: Feature) {
 // - any part of any feature to exceed the poles
 // - any feature to be completely lost in the space between the projection's
 //   edge and the poles, such that it couldn't be re-selected and moved back
-export default function(geojsonFeatures: Feature[], delta: {lng: number, lat: number}) {
+export default function(geojsonFeatures: G.Feature[], delta: {lng: number, lat: number}) {
   // "inner edge" = a feature's latitude closest to the equator
   let northInnerEdge = LAT_MIN;
   let southInnerEdge = LAT_MAX;

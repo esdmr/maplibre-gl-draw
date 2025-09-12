@@ -1,27 +1,27 @@
 import constrainFeatureMovement from './constrain_feature_movement.js';
 import * as Constants from '../constants.js';
 import type Feature from '../feature_types/feature.js';
-import type { Position } from 'geojson';
+import type * as G from 'geojson';
 
 export default function moveFeatures(features: Feature<any>[], delta: { lng: number; lat: number; }) {
   const constrainedDelta = constrainFeatureMovement(features.map(feature => feature.toGeoJSON()), delta);
 
   features.forEach((feature) => {
-    const moveCoordinate = (coord: Position) => [coord[0] + constrainedDelta.lng, coord[1] + constrainedDelta.lat];
+    const moveCoordinate = (coord: G.Position) => [coord[0] + constrainedDelta.lng, coord[1] + constrainedDelta.lat];
 
-    const moveRing = (ring: Position[]) => ring.map(coord => moveCoordinate(coord));
-    const moveMultiPolygon = (multi: Position[][]) => multi.map(ring => moveRing(ring));
+    const moveRing = (ring: G.Position[]) => ring.map(coord => moveCoordinate(coord));
+    const moveMultiPolygon = (multi: G.Position[][]) => multi.map(ring => moveRing(ring));
 
     let nextCoordinates;
 
     if (feature.type === Constants.geojsonTypes.POINT) {
-      nextCoordinates = moveCoordinate(feature.getCoordinates() as Position);
+      nextCoordinates = moveCoordinate(feature.getCoordinates() as G.Position);
     } else if (feature.type === Constants.geojsonTypes.LINE_STRING || feature.type === Constants.geojsonTypes.MULTI_POINT) {
-      nextCoordinates = (feature.getCoordinates() as Position[]).map(moveCoordinate);
+      nextCoordinates = (feature.getCoordinates() as G.Position[]).map(moveCoordinate);
     } else if (feature.type === Constants.geojsonTypes.POLYGON || feature.type === Constants.geojsonTypes.MULTI_LINE_STRING) {
-      nextCoordinates = (feature.getCoordinates() as Position[][]).map(moveRing);
+      nextCoordinates = (feature.getCoordinates() as G.Position[][]).map(moveRing);
     } else if (feature.type === Constants.geojsonTypes.MULTI_POLYGON) {
-      nextCoordinates = (feature.getCoordinates() as Position[][][]).map(moveMultiPolygon);
+      nextCoordinates = (feature.getCoordinates() as G.Position[][][]).map(moveMultiPolygon);
     }
 
     feature.incomingCoords(nextCoordinates);

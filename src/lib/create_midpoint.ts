@@ -1,5 +1,5 @@
 import * as Constants from '../constants.js';
-import * as G from 'geojson';
+import type * as G from 'geojson';
 
 export default function createMidpoint(parent: string, startVertex: G.Feature<G.Point>, endVertex: G.Feature<G.Point>): G.Feature<G.Point> | null {
   const startCoord = startVertex.geometry.coordinates;

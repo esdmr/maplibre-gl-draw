@@ -1,4 +1,4 @@
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import { noTarget, isOfMetaType, isActiveFeature, isInactiveFeature, isShiftDown } from '../lib/common_selectors.js';
 import createSupplementaryPoints from '../lib/create_supplementary_points.js';
 import constrainFeatureMovement from '../lib/constrain_feature_movement.js';

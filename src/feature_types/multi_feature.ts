@@ -1,4 +1,4 @@
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import * as Constants from '../constants.js';
 import { generateID } from '../lib/id.js';
 import Feature from './feature.js';

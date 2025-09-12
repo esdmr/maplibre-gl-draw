@@ -1,4 +1,4 @@
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import toDenseArray from './lib/to_dense_array.js';
 import StringSet from './lib/string_set.js';
 import render from './render.js';

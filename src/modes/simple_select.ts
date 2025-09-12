@@ -1,4 +1,4 @@
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import * as CommonSelectors from '../lib/common_selectors.js';
 import mouseEventPoint from '../lib/mouse_event_point.js';
 import createSupplementaryPoints from '../lib/create_supplementary_points.js';

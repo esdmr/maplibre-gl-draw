@@ -1,6 +1,6 @@
 import {generateID} from '../lib/id.js';
 import * as Constants from '../constants.js';
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import type { MaplibreDrawContext } from '../context.js';
 
 abstract class Feature<T extends G.Geometry = G.Geometry> {

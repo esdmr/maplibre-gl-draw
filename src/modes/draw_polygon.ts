@@ -1,4 +1,4 @@
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import * as CommonSelectors from '../lib/common_selectors.js';
 import {enableDoubleClickZoom, disableDoubleClickZoom} from '../lib/double_click_zoom.js';
 import * as Constants from '../constants.js';

@@ -1,4 +1,4 @@
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import type { MapDataEvent, MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
 import * as Constants from './constants.js';
 import type { MaplibreDrawContext } from './context.js';

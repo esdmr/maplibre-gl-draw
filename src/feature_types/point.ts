@@ -1,4 +1,4 @@
-import * as G from 'geojson';
+import type * as G from 'geojson';
 import Feature from './feature.js';
 
 class Point extends Feature<G.Point> {

@@ -1,5 +1,5 @@
 import Feature from './feature.js';
-import * as G from 'geojson';
+import type * as G from 'geojson';
 
 class LineString extends Feature<G.LineString> {
   isValid() {

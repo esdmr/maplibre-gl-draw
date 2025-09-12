@@ -1,13 +1,13 @@
-import type { Feature } from 'geojson';
+import type * as G from 'geojson';
 import type { MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
 
 declare module 'maplibre-gl' {
   interface MapTouchEvent {
-    featureTarget?: Feature;
+    featureTarget?: G.Feature;
   }
 
   interface MapMouseEvent {
-    featureTarget?: Feature;
+    featureTarget?: G.Feature;
   }
 }
 

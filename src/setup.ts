@@ -18,13 +18,13 @@ export default class Setup<T extends Record<string, {}>> {
 
   constructor(ctx: MaplibreDrawContext<T>, map: Map) {
     this.ctx = ctx;
+    ctx.setup = this; // FIXME: Circular dependency nonsense...
 
     this.map = map;
     this.events = new Events(this.ctx);
     this.ui = ui(this.ctx);
     this.container = map.getContainer();
     this.store = new Store(this.ctx);
-
 
     this.controlContainer = this.ui.addButtons();
 

@@ -1,5 +1,5 @@
 import * as G from 'geojson';
-import type { Map, MapMouseEvent, MapTouchEvent, PointLike } from 'maplibre-gl';
+import type { MapMouseEvent, MapTouchEvent, PointLike } from 'maplibre-gl';
 import * as Constants from '../constants.js';
 import type { MaplibreDrawContext } from '../context.js';
 import type Events from '../events.js';
@@ -19,7 +19,6 @@ export type ModeOptEntry<T extends Record<string, {}>> = {[K in keyof T]: [K, T[
 export type ModeConstructor<Opts = {}> = new (ctx: MaplibreDrawContext<any>) => ModeInterface<Opts, any>;
 
 export default abstract class ModeInterface<Opts = {}, State = {}> {
-  map: Map;
   _ctx: MaplibreDrawContext<any>
   private _state: State | undefined;
 
@@ -32,7 +31,6 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
   }
 
   constructor(ctx: MaplibreDrawContext<any>) {
-    this.map = ctx.mapOrThrow;
     this._ctx = ctx;
   }
 

@@ -204,17 +204,17 @@ export default class DirectSelect extends ModeInterface<Opts, State> {
 
   private startDragging(state: State, {lngLat}: MapMouseEvent | MapTouchEvent) {
     if (state.initialDragPanState == null) {
-      state.initialDragPanState = this.map.dragPan.isEnabled();
+      state.initialDragPanState = this._ctx.mapOrThrow.dragPan.isEnabled();
     }
 
-    this.map.dragPan.disable();
+    this._ctx.mapOrThrow.dragPan.disable();
     state.canDragMove = true;
     state.dragMoveLocation = lngLat;
   }
 
   private stopDragging(state: State) {
     if (state.canDragMove && state.initialDragPanState === true) {
-      this.map.dragPan.enable();
+      this._ctx.mapOrThrow.dragPan.enable();
     }
 
     state.initialDragPanState = null;

@@ -24,14 +24,13 @@ function comparator(a: G.Feature & {area?: number}, b: G.Feature & {area?: numbe
 
 // Sort in the order above, then sort polygons by area ascending.
 function sortFeatures(features: G.Feature[]) {
-  return features.map((feature) => ({
-    ...feature,
-    geometry: feature.geometry, // FIXME: geometry is a getter??
-    area: feature.geometry.type === Constants.geojsonTypes.POLYGON
-      ? area.geometry(feature.geometry)
-      : undefined,
-  })).sort(comparator).map<G.Feature>((feature) => {
-    delete feature.area;
+  return features.map((feature: G.Feature & {area?: number}) => {
+    feature.area = feature.geometry.type === Constants.geojsonTypes.POLYGON
+        ? area.geometry(feature.geometry)
+        : undefined;
+    return feature;
+  }).sort(comparator).map<G.Feature>((feature) => {
+    delete feature.properties!.area;
     return feature;
   });
 }

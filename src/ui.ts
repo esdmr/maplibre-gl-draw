@@ -119,7 +119,7 @@ export default function ui<T extends Record<string, {}>>(ctx: MaplibreDrawContex
     }
 
     // FIXME: Add base type to modes
-    if (controls[Constants.types.LINE] && Constants.types.LINE in (ctx.options.modes as any)) {
+    if (controls[Constants.types.LINE] && Constants.modes.DRAW_LINE_STRING in (ctx.options.modes as any)) {
       buttonElements[Constants.types.LINE] = createControlButton(Constants.types.LINE, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_LINE,
@@ -131,7 +131,7 @@ export default function ui<T extends Record<string, {}>>(ctx: MaplibreDrawContex
     }
 
     // FIXME: Add base type to modes
-    if (controls[Constants.types.POLYGON] && Constants.types.POLYGON in (ctx.options.modes as any)) {
+    if (controls[Constants.types.POLYGON] && Constants.modes.DRAW_POLYGON in (ctx.options.modes as any)) {
       buttonElements[Constants.types.POLYGON] = createControlButton(Constants.types.POLYGON, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_POLYGON,

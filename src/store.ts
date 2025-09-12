@@ -151,7 +151,7 @@ export default class Store<T extends Record<string, {}>> {
   /**
    * Adds a feature to the store.
    */
-  add(feature: Feature, {silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  add(feature: Feature, {silent}: {silent?: boolean} = {}) {
     this._features[feature.id] = feature;
     this._featureIds.add(feature.id);
     this.featureCreated(feature.id, {silent});
@@ -164,7 +164,7 @@ export default class Store<T extends Record<string, {}>> {
    * If changes were made, sets the state to the dirty
    * and fires an event.
    */
-  delete(featureIds: string | number | Array<string | number>, {silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  delete(featureIds: string | number | Array<string | number>, {silent}: {silent?: boolean} = {}) {
     const deletedFeaturesToEmit: G.Feature[] = [];
 
     toDenseArray(featureIds).forEach((id) => {
@@ -206,7 +206,7 @@ export default class Store<T extends Record<string, {}>> {
   /**
    * Adds features to the current selection.
    */
-  select(featureIds: string | number | Array<string | number>, {silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  select(featureIds: string | number | Array<string | number>, {silent}: {silent?: boolean} = {}) {
     toDenseArray(featureIds).forEach((id) => {
       if (this._selectedFeatureIds.has(id)) return;
       this._selectedFeatureIds.add(id);
@@ -221,7 +221,7 @@ export default class Store<T extends Record<string, {}>> {
   /**
    * Deletes features from the current selection.
    */
-  deselect(featureIds: string | number | Array<string | number>, {silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  deselect(featureIds: string | number | Array<string | number>, {silent}: {silent?: boolean} = {}) {
     toDenseArray(featureIds).forEach((id) => {
       if (!this._selectedFeatureIds.has(id)) return;
       this._selectedFeatureIds.delete(id);
@@ -237,7 +237,7 @@ export default class Store<T extends Record<string, {}>> {
   /**
    * Clears the current selection.
    */
-  clearSelected({silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  clearSelected({silent}: {silent?: boolean} = {}) {
     this.deselect(this._selectedFeatureIds.values(), { silent });
     return this;
   }
@@ -246,7 +246,7 @@ export default class Store<T extends Record<string, {}>> {
    * Sets the store's selection, clearing any prior values.
    * If no feature ids are passed, the store is just cleared.
    */
-  setSelected(featureIds?: string | number | (string | number)[], {silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  setSelected(featureIds?: string | number | (string | number)[], {silent}: {silent?: boolean} = {}) {
     featureIds = toDenseArray(featureIds);
 
     // Deselect any features not in the new selection
@@ -312,7 +312,7 @@ export default class Store<T extends Record<string, {}>> {
   /**
    * Sets a property on the given feature
   */
-  setFeatureProperty(featureId: string | number, property: string, value: unknown, {silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  setFeatureProperty(featureId: string | number, property: string, value: unknown, {silent}: {silent?: boolean} = {}) {
     const feature = this.get(featureId);
 
     if (!feature) {
@@ -367,7 +367,7 @@ export default class Store<T extends Record<string, {}>> {
     }
   }
 
-  private _refreshSelectedCoordinates({silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  private _refreshSelectedCoordinates({silent}: {silent?: boolean} = {}) {
     const newSelectedCoordinates = this._selectedCoordinates.filter(({feature_id}) => this._selectedFeatureIds.has(feature_id));
     if (this._selectedCoordinates.length !== newSelectedCoordinates.length && !silent) {
       this._emitSelectionChange = true;

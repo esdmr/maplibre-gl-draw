@@ -240,7 +240,7 @@ export default class Events<T extends Record<string, {}>> {
     return this.currentModeName;
   }
 
-  changeMode<K extends keyof T>(modeName: K, nextModeOptions: T[K], {silent = this.ctx.options.suppressAPIEvents}: {silent?: boolean} = {}) {
+  changeMode<K extends keyof T>(modeName: K, nextModeOptions: T[K], {silent}: {silent?: boolean} = {}) {
     this.currentMode.stop();
 
     const mode = this.modes[modeName];

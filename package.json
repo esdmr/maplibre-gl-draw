@@ -24,8 +24,13 @@
   "type": "module",
   "exports": {
     ".": "./index.js",
+    "./index.js": "./index.js",
+    "./index.ts": "./index.js",
+    "./src/*": "./src/*",
     "./dist/maplibre-gl-draw-unminified.js": "./index.js",
+    "./dist/maplibre-gl-draw-unminified.ts": "./index.js",
     "./dist/maplibre-gl-draw.js": "./index.js",
+    "./dist/maplibre-gl-draw.ts": "./index.js",
     "./dist/maplibre-gl-draw.css": "./dist/maplibre-gl-draw.css"
   },
   "style": "dist/maplibre-gl-draw.css",
@@ -35,6 +40,7 @@
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
+    "@types/mapbox__geojson-area": "^0.2.6",
     "@types/node": "^20.19.2",
     "maplibre-gl": "^5.7.0"
   },

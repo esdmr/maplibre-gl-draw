@@ -1,0 +1,32 @@
+import euclideanDistance from './euclidean_distance.js';
+
+const FINE_TOLERANCE = 4;
+const GROSS_TOLERANCE = 12;
+const INTERVAL = 500;
+
+export type ClickState = {
+  point: {
+    x: number;
+    y: number;
+  };
+  time: number;
+};
+
+type ClickOptions = {
+  fineTolerance?: number;
+  grossTolerance?: number;
+  interval?: number;
+};
+
+export default function isClick(start: Partial<ClickState>, end: ClickState, options: ClickOptions = {}) {
+  const fineTolerance = (options.fineTolerance != null) ? options.fineTolerance : FINE_TOLERANCE;
+  const grossTolerance = (options.grossTolerance != null) ? options.grossTolerance : GROSS_TOLERANCE;
+  const interval = (options.interval != null) ? options.interval : INTERVAL;
+
+  start.point = start.point || end.point;
+  start.time = start.time || end.time;
+  const moveDistance = euclideanDistance(start.point, end.point);
+
+  return moveDistance < fineTolerance ||
+    (moveDistance < grossTolerance && (end.time - start.time) < interval);
+}

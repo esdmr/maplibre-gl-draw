@@ -37,12 +37,19 @@
   "types": "index.ts",
   "scripts": {
     "build": "rollup -c",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "test": "node --test --experimental-strip-types --import ./test/mock-browser.js",
+    "coverage": "node --test --experimental-strip-types --import ./test/mock-browser.js --experimental-test-coverage"
   },
   "devDependencies": {
+    "@turf/bbox-clip": "^7.2.0",
+    "@turf/centroid": "^7.2.0",
     "@types/mapbox__geojson-area": "^0.2.6",
     "@types/node": "^20.19.2",
-    "maplibre-gl": "^5.7.0"
+    "maplibre-gl": "^5.7.0",
+    "mock-browser": "^0.92.14",
+    "sinon": "^21.0.0",
+    "synthetic-dom-events": "^0.3.0"
   },
   "dependencies": {
     "@mapbox/geojson-area": "^0.2.2",

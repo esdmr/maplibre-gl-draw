@@ -1,5 +1,5 @@
 import area from '@mapbox/geojson-area';
-import * as Constants from '../constants.js';
+import * as Constants from '../constants.ts';
 import type * as G from 'geojson';
 
 const FEATURE_SORT_RANKS = {
@@ -12,8 +12,8 @@ const FEATURE_SORT_RANKS = {
   GeometryCollection: 3,
 } as const;
 
-function comparator(a: G.Feature & {area?: number}, b: G.Feature & {area?: number}) {
-  const score = FEATURE_SORT_RANKS[a.geometry.type] - FEATURE_SORT_RANKS[b.geometry.type];
+function comparator(a: {feature: G.Feature, area?: number}, b: {feature: G.Feature, area?: number}) {
+  const score = FEATURE_SORT_RANKS[a.feature.geometry.type] - FEATURE_SORT_RANKS[b.feature.geometry.type];
 
   if (score === 0 && a.area !== undefined && b.area !== undefined) {
     return a.area - b.area;
@@ -24,15 +24,11 @@ function comparator(a: G.Feature & {area?: number}, b: G.Feature & {area?: numbe
 
 // Sort in the order above, then sort polygons by area ascending.
 function sortFeatures(features: G.Feature[]) {
-  return features.map((feature: G.Feature & {area?: number}) => {
-    feature.area = feature.geometry.type === Constants.geojsonTypes.POLYGON
-        ? area.geometry(feature.geometry)
-        : undefined;
-    return feature;
-  }).sort(comparator).map<G.Feature>((feature) => {
-    delete feature.properties!.area;
-    return feature;
-  });
+  return features.map((feature) => ({
+    feature, area: feature.geometry.type === Constants.geojsonTypes.POLYGON
+      ? area.geometry(feature.geometry)
+      : undefined
+  })).sort(comparator).map<G.Feature>(({feature}) => feature);
 }
 
 export default sortFeatures;

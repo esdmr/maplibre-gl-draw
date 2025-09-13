@@ -1,12 +1,12 @@
 import type * as G from 'geojson';
-import * as CommonSelectors from '../lib/common_selectors.js';
-import isEventAtCoordinates from '../lib/is_event_at_coordinates.js';
-import {enableDoubleClickZoom, disableDoubleClickZoom} from '../lib/double_click_zoom.js';
-import * as Constants from '../constants.js';
-import createVertex from '../lib/create_vertex.js';
-import ModeInterface from './mode_interface.js';
-import LineString from '../feature_types/line_string.js';
-import type Feature from '../feature_types/feature.js';
+import * as CommonSelectors from '../lib/common_selectors.ts';
+import isEventAtCoordinates from '../lib/is_event_at_coordinates.ts';
+import {enableDoubleClickZoom, disableDoubleClickZoom} from '../lib/double_click_zoom.ts';
+import * as Constants from '../constants.ts';
+import createVertex from '../lib/create_vertex.ts';
+import ModeInterface from './mode_interface.ts';
+import LineString from '../feature_types/line_string.ts';
+import type Feature from '../feature_types/feature.ts';
 import type { MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
 
 type State = {
@@ -47,17 +47,18 @@ export default class DrawLineString extends ModeInterface<Opts, State> {
         throw new Error('Please use the `from` property to indicate which point to continue the line from');
       }
 
-      const lastCoord = line.coordinates.length - 1;
+      const firstCoord = line.coordinates[0];
+      const lastCoord = line.coordinates[line.coordinates.length - 1];
 
-      if (line.coordinates[lastCoord][0] === position[0] && line.coordinates[lastCoord][1] === position[1]) {
-        currentVertexPosition = lastCoord + 1;
+      if (lastCoord[0] === position[0] && lastCoord[1] === position[1]) {
+        currentVertexPosition = line.coordinates.length;
         // add one new coordinate to continue from
-        line.addCoordinate(`${currentVertexPosition}`, line.coordinates[lastCoord][0], line.coordinates[lastCoord][1]);
-      } else if (line.coordinates[0][0] === position[0] && line.coordinates[0][1] === position[1]) {
+        line.addCoordinate(`${currentVertexPosition}`, lastCoord[0], lastCoord[1]);
+      } else if (firstCoord[0] === position[0] && firstCoord[1] === position[1]) {
         direction = 'backwards';
         currentVertexPosition = 0;
         // add one new coordinate to continue from
-        line.addCoordinate(`${currentVertexPosition}`, line.coordinates[lastCoord][0], line.coordinates[lastCoord][1]);
+        line.addCoordinate(`${currentVertexPosition}`, firstCoord[0], firstCoord[1]);
       } else {
         throw new Error('`from` should match the point at either the start or the end of the provided LineString');
       }
@@ -160,12 +161,10 @@ export default class DrawLineString extends ModeInterface<Opts, State> {
   }
 
   protected toDisplayFeatures({line, direction}: State, geojson: G.Feature, display: (geojson: G.Feature) => void) {
-    if (geojson.geometry.type !== 'LineString') return;
-
     geojson.properties ??= {};
     const isActiveLine = geojson.properties.id === line.id;
     geojson.properties.active = (isActiveLine) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
-    if (!isActiveLine) return display(geojson);
+    if (!isActiveLine || geojson.geometry.type !== 'LineString') return display(geojson);
     // Only render the line if it has at least one real coordinate
     if (geojson.geometry.coordinates.length < 2) return;
     geojson.properties.meta = Constants.meta.FEATURE;

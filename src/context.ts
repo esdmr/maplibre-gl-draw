@@ -1,10 +1,14 @@
-import MaplibreDrawApi from './api.js';
-import type { Options } from './options.js';
-import Setup from './setup.js';
+import MaplibreDrawApi from './api.ts';
+import Events from './events.ts';
+import type { Options } from './options.ts';
+import Setup from './setup.ts';
+import ui from './ui.ts';
 
 export class MaplibreDrawContext<T extends Record<string, {}>> {
   options: Options<T>;
-  api = new MaplibreDrawApi(this);
+  api;
+  ui;
+  events;
   setup: Setup<T> | undefined;
 
   get setupOrThrow() {
@@ -15,35 +19,30 @@ export class MaplibreDrawContext<T extends Record<string, {}>> {
     return this.setup;
   }
 
-  get controlContainerOrThrow () {
+  get controlContainer () {
     return this.setupOrThrow.controlContainer;
   }
 
-  get mapOrThrow () {
+  get map () {
     return this.setupOrThrow.map;
   }
 
-  get storeOrThrow () {
+  get store () {
     return this.setupOrThrow.store;
   }
 
-  get uiOrThrow () {
-    return this.setupOrThrow.ui;
-  }
-
-  get eventsOrThrow () {
-    return this.setupOrThrow.events;
-  }
-
-  get containerOrThrow () {
+  get container () {
     return this.setupOrThrow.container;
   }
 
-  get boxZoomInitialOrThrow () {
+  get boxZoomInitial () {
     return this.setupOrThrow.boxZoomInitial;
   }
 
   constructor(options: Options<T>) {
     this.options = options;
+    this.api = new MaplibreDrawApi(this);
+    this.ui = ui(this);
+    this.events = new Events(this);
   }
 }

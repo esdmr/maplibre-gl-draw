@@ -1,10 +1,10 @@
 import type * as G from 'geojson';
 import type { MapMouseEvent, MapTouchEvent, PointLike, QueryRenderedFeaturesOptions } from 'maplibre-gl';
-import * as Constants from '../constants.js';
-import type { MaplibreDrawContext } from '../context.js';
-import mapEventToBoundingBox from './map_event_to_bounding_box.js';
-import sortFeatures from './sort_features.js';
-import StringSet from './string_set.js';
+import * as Constants from '../constants.ts';
+import type { MaplibreDrawContext } from '../context.ts';
+import mapEventToBoundingBox from './map_event_to_bounding_box.ts';
+import sortFeatures from './sort_features.ts';
+import StringSet from './string_set.ts';
 
 const META_TYPES = [
   Constants.meta.FEATURE,
@@ -35,9 +35,9 @@ function featuresAt<T extends Record<string, {}>>(event: MapMouseEvent | MapTouc
 
   const queryParams: QueryRenderedFeaturesOptions = {};
 
-  if (ctx.options.styles) queryParams.layers = ctx.options.styles.map(({id}) => id).filter(id => ctx.mapOrThrow.getLayer(id) != null);
+  if (ctx.options.styles) queryParams.layers = ctx.options.styles.map(({id}) => id).filter(id => ctx.map.getLayer(id) != null);
 
-  const features = ctx.mapOrThrow.queryRenderedFeatures(box, queryParams)
+  const features = ctx.map.queryRenderedFeatures(box, queryParams)
     .filter(({properties}) => META_TYPES.includes(properties.meta));
 
   const featureIds = new StringSet();

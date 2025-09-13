@@ -1,6 +1,6 @@
 import type * as G from 'geojson';
-import Feature from './feature.js';
-import type { MaplibreDrawContext } from '../context.js';
+import Feature from './feature.ts';
+import type { MaplibreDrawContext } from '../context.ts';
 
 class Polygon extends Feature<G.Polygon> {
   constructor(ctx: MaplibreDrawContext<any>, geojson: G.Feature<G.Polygon>) {
@@ -26,28 +26,44 @@ class Polygon extends Feature<G.Polygon> {
   }
 
   addCoordinate(path: string, lng: number, lat: number) {
-    this.changed();
     const ids = path.split('.').map(x => parseInt(x, 10));
 
-    const ring = this.coordinates[ids[0]];
+    if (!Number.isSafeInteger(ids[0]) || !Number.isSafeInteger(ids[1])) {
+      throw new Error(`Invalid path ${path} passed to maplibre-gl-draw Polygon.addCoordinate`);
+    }
 
+    const ring = this.coordinates[ids[0]];
     ring.splice(ids[1], 0, [lng, lat]);
+    this.changed();
   }
 
   removeCoordinate(path: string) {
-    this.changed();
     const ids = path.split('.').map(x => parseInt(x, 10));
+
+    if (!Number.isSafeInteger(ids[0]) || !Number.isSafeInteger(ids[1])) {
+      throw new Error(`Invalid path ${path} passed to maplibre-gl-draw Polygon.removeCoordinate`);
+    }
+
     const ring = this.coordinates[ids[0]];
+
     if (ring) {
       ring.splice(ids[1], 1);
+
       if (ring.length < 3) {
         this.coordinates.splice(ids[0], 1);
       }
     }
+
+    this.changed();
   }
 
   getCoordinate(path: string) {
     const ids = path.split('.').map(x => parseInt(x, 10));
+
+    if (!Number.isSafeInteger(ids[0]) || !Number.isSafeInteger(ids[1])) {
+      throw new Error(`Invalid path ${path} passed to maplibre-gl-draw Polygon.getCoordinate`);
+    }
+
     const ring = this.coordinates[ids[0]];
     return JSON.parse(JSON.stringify(ring[ids[1]]));
   }
@@ -57,16 +73,15 @@ class Polygon extends Feature<G.Polygon> {
   }
 
   updateCoordinate(path: string, lng: number, lat: number) {
-    this.changed();
-    const parts = path.split('.');
-    const ringId = parseInt(parts[0], 10);
-    const coordId = parseInt(parts[1], 10);
+    const ids = path.split('.').map(i => parseInt(i, 10));
 
-    if (this.coordinates[ringId] === undefined) {
-      this.coordinates[ringId] = [];
+    if (!Number.isSafeInteger(ids[0]) || !Number.isSafeInteger(ids[1])) {
+      throw new Error(`Invalid path ${path} passed to maplibre-gl-draw Polygon.updateCoordinate`);
     }
 
-    this.coordinates[ringId][coordId] = [lng, lat];
+    this.coordinates[ids[0]] ??= [];
+    this.coordinates[ids[0]][ids[1]] = [lng, lat];
+    this.changed();
   }
 }
 

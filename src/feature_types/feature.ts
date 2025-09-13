@@ -1,25 +1,25 @@
-import {generateID} from '../lib/id.js';
-import * as Constants from '../constants.js';
+import {generateID} from '../lib/id.ts';
+import * as Constants from '../constants.ts';
 import type * as G from 'geojson';
-import type { MaplibreDrawContext } from '../context.js';
+import type { MaplibreDrawContext } from '../context.ts';
 
 abstract class Feature<T extends G.Geometry = G.Geometry> {
   ctx;
   properties: { [name: string]: any; };
   coordinates: T extends { coordinates: infer S } ? S : undefined;
-  id: string;
+  id: string | number;
   type: string;
 
   constructor(ctx: MaplibreDrawContext<any>, {properties, geometry, id}: G.Feature<T>) {
     this.ctx = ctx;
     this.properties = properties || {};
     this.coordinates = 'coordinates' in geometry ? geometry.coordinates as any : undefined;
-    this.id = String(id || generateID());
+    this.id = id || generateID();
     this.type = geometry.type;
   }
 
   changed() {
-    this.ctx.storeOrThrow.featureChanged(this.id);
+    this.ctx.store.featureChanged(this.id);
   }
 
   incomingCoords(coords: this['coordinates']) {
@@ -77,10 +77,10 @@ abstract class Feature<T extends G.Geometry = G.Geometry> {
   }
 
   abstract isValid(): boolean;
-  abstract addCoordinate(path: string, lng: number, lat: number): void;
-  abstract getCoordinate(path: string): G.Position;
-  abstract updateCoordinate(path: string, lng: number, lat: number): void;
-  abstract removeCoordinate(path: string): void;
+  abstract addCoordinate(path: string | null, lng: number, lat: number): void;
+  abstract getCoordinate(path: string | null): G.Position;
+  abstract updateCoordinate(path: string | null, lng: number, lat: number): void;
+  abstract removeCoordinate(path: string | null): void;
 }
 
 export default Feature;

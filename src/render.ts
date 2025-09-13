@@ -1,14 +1,14 @@
 import type { GeoJSONSource } from 'maplibre-gl';
-import * as Constants from './constants.js';
-import type Store from './store.js';
+import * as Constants from './constants.ts';
+import type Store from './store.ts';
 
 export default function render<T extends Record<string, {}>>(store: Store<T>) {
-  const mapExists = store.ctx.setup && store.ctx.mapOrThrow.getSource(Constants.sources.HOT) !== undefined;
+  const mapExists = store.ctx.setup && store.ctx.map.getSource(Constants.sources.HOT) !== undefined;
   if (!mapExists) return cleanup();
 
-  const mode = store.ctx.eventsOrThrow.currentModeName;
+  const mode = store.ctx.events.currentModeName;
 
-  store.ctx.uiOrThrow.queueMapClasses({ mode: String(mode) });
+  store.ctx.ui.queueMapClasses({ mode: String(mode) });
 
   let newHotIds: (string | number)[] = [];
   let newColdIds: (string | number)[] = [];
@@ -37,7 +37,7 @@ export default function render<T extends Record<string, {}>>(store: Store<T>) {
     }
 
     const featureInternal = feature.internal(mode);
-    store.ctx.eventsOrThrow.currentModeRender(featureInternal, (geojson) => {
+    store.ctx.events.currentModeRender(featureInternal, (geojson) => {
       geojson.properties ??= {};
       geojson.properties.mode = mode;
       store.sources[source].push(geojson);
@@ -45,13 +45,13 @@ export default function render<T extends Record<string, {}>>(store: Store<T>) {
   }
 
   if (coldChanged) {
-    store.ctx.mapOrThrow.getSource<GeoJSONSource>(Constants.sources.COLD)!.setData({
+    store.ctx.map.getSource<GeoJSONSource>(Constants.sources.COLD)!.setData({
       type: Constants.geojsonTypes.FEATURE_COLLECTION,
       features: store.sources.cold
     });
   }
 
-  store.ctx.mapOrThrow.getSource<GeoJSONSource>(Constants.sources.HOT)!.setData({
+  store.ctx.map.getSource<GeoJSONSource>(Constants.sources.HOT)!.setData({
     type: Constants.geojsonTypes.FEATURE_COLLECTION,
     features: store.sources.hot
   });

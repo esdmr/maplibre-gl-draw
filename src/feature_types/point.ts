@@ -1,5 +1,5 @@
 import type * as G from 'geojson';
-import Feature from './feature.js';
+import Feature from './feature.ts';
 
 class Point extends Feature<G.Point> {
   isValid() {
@@ -7,28 +7,32 @@ class Point extends Feature<G.Point> {
       typeof this.coordinates[1] === 'number';
   }
 
-  addCoordinate (_path: string, _lng: number, _lat: number): void {
+  addCoordinate (_path: string | null | undefined, _lng: number, _lat: number): void {
     throw new Error('maplibre-gl-draw Feature.addCoordinate called on a Point');
   }
 
-  getCoordinate(_path: string) {
+  getCoordinate(path?: string | null) {
     return this.getCoordinates();
   }
 
-  updateCoordinate(_path: string, lng: number, lat: number): void;
+  updateCoordinate(_path: string | null | undefined, lng: number, lat: number): void;
   updateCoordinate(lng: number, lat: number): void;
 
-  updateCoordinate(pathOrLng: string | number, lngOrLat: number, lat?: number) {
-    if (arguments.length === 3) {
+  updateCoordinate(pathOrLng: string | null | undefined | number, lngOrLat: number, lat?: number) {
+    if (arguments.length >= 3) {
       this.coordinates = [lngOrLat, lat!];
     } else {
+      if (typeof pathOrLng !== 'number') {
+        throw new Error(`Invalid longitude ${pathOrLng} passed to maplibre-gl-draw Point.updateCoordinate`);
+      }
+
       this.coordinates = [pathOrLng as number, lngOrLat];
     }
 
     this.changed();
   }
 
-  removeCoordinate (_path: string): void {
+  removeCoordinate (_path?: string | null): void {
     throw new Error('maplibre-gl-draw Feature.removeCoordinate called on a Point');
   }
 }

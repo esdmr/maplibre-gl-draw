@@ -1,21 +1,25 @@
 import normalize from '@mapbox/geojson-normalize';
 import isEqual from 'fast-deep-equal';
-import * as Constants from './constants.js';
-import { featuresAtClick } from './lib/features_at.js';
-import { generateID } from './lib/id.js';
-import StringSet from './lib/string_set.js';
-import stringSetsAreEqual from './lib/string_sets_are_equal.js';
+import * as Constants from './constants.ts';
+import { featuresAtClick } from './lib/features_at.ts';
+import { generateID } from './lib/id.ts';
+import StringSet from './lib/string_set.ts';
+import stringSetsAreEqual from './lib/string_sets_are_equal.ts';
 
 import type * as G from 'geojson';
 import type { IControl, Map } from 'maplibre-gl';
-import { MaplibreDrawContext } from './context.js';
-import type Feature from './feature_types/feature.js';
-import { featureTypes } from './feature_types/index.js';
-import Setup from './setup.js';
-import mapEventToBoundingBox from './lib/map_event_to_bounding_box.js';
+import { MaplibreDrawContext } from './context.ts';
+import type Feature from './feature_types/feature.ts';
+import { featureTypes } from './feature_types/index.ts';
+import Setup from './setup.ts';
+import mapEventToBoundingBox from './lib/map_event_to_bounding_box.ts';
 
 export default class MaplibreDrawApi<T extends Record<string, {}>> implements IControl {
   ctx;
+
+  get options() {
+    return this.ctx.options;
+  }
 
   get silent() {
     return this.ctx.options.suppressAPIEvents;
@@ -31,7 +35,7 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
     }
 
     this.ctx.setup = new Setup(this.ctx, map);
-    return this.ctx.controlContainerOrThrow;
+    return this.ctx.controlContainer;
   }
 
   onRemove() {
@@ -44,13 +48,13 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
   }
 
   getSelectedIds() {
-    return this.ctx.storeOrThrow.getSelectedIds();
+    return this.ctx.store.getSelectedIds();
   }
 
   getSelected() {
     return {
       type: Constants.geojsonTypes.FEATURE_COLLECTION,
-      features: this.ctx.storeOrThrow.getSelectedIds().map(id => this.ctx.storeOrThrow.get(id)).filter(i => i !== undefined).map(feature => feature.toGeoJSON())
+      features: this.ctx.store.getSelectedIds().map(id => this.ctx.store.get(id)).filter(i => i !== undefined).map(feature => feature.toGeoJSON())
     };
   }
 
@@ -58,7 +62,7 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
     return {
       type: Constants.geojsonTypes.FEATURE_COLLECTION,
 
-      features: this.ctx.storeOrThrow.getSelectedCoordinates().map((coordinates) => ({
+      features: this.ctx.store.getSelectedCoordinates().map((coordinates) => ({
         type: Constants.geojsonTypes.FEATURE,
         properties: {},
 
@@ -74,8 +78,8 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
     if (featureCollection.type === undefined || featureCollection.type !== Constants.geojsonTypes.FEATURE_COLLECTION || !Array.isArray(featureCollection.features)) {
       throw new Error('Invalid FeatureCollection');
     }
-    const renderBatch = this.ctx.storeOrThrow.createRenderBatch();
-    let toDelete = this.ctx.storeOrThrow.getAllIds().slice();
+    const renderBatch = this.ctx.store.createRenderBatch();
+    let toDelete = this.ctx.store.getAllIds().slice();
     const newIds = this.add(featureCollection);
     const newIdsLookup = new StringSet(newIds);
 
@@ -98,21 +102,21 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
         throw new Error('Invalid geometry: null');
       }
 
-      if (this.ctx.storeOrThrow.get(feature.id) === undefined || this.ctx.storeOrThrow.get(feature.id)?.type !== feature.geometry.type) {
+      if (this.ctx.store.get(feature.id) === undefined || this.ctx.store.get(feature.id)?.type !== feature.geometry.type) {
         // If the feature has not yet been created ...
         const Model = featureTypes[feature.geometry.type as keyof typeof featureTypes];
         if (Model === undefined) {
           throw new Error(`Invalid geometry type: ${feature.geometry.type}.`);
         }
         const internalFeature: Feature = new (Model as any)(this.ctx, feature);
-        this.ctx.storeOrThrow.add(internalFeature, { silent: this.silent });
+        this.ctx.store.add(internalFeature, { silent: this.silent });
       } else {
         // If a feature of that id has already been created, and we are swapping it out ...
-        const internalFeature = this.ctx.storeOrThrow.get(feature.id)!;
+        const internalFeature = this.ctx.store.get(feature.id)!;
         const originalProperties = internalFeature.properties;
         internalFeature.properties = feature.properties ?? {};
         if (!isEqual(originalProperties, feature.properties)) {
-          this.ctx.storeOrThrow.featureChanged(internalFeature.id, { silent: this.silent });
+          this.ctx.store.featureChanged(internalFeature.id, { silent: this.silent });
         }
         if (!isEqual(internalFeature.getCoordinates(), 'coordinates' in feature.geometry ? feature.geometry.coordinates : undefined)) {
           internalFeature.incomingCoords('coordinates' in feature.geometry ? feature.geometry.coordinates : undefined);
@@ -121,13 +125,13 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
       return feature.id;
     });
 
-    this.ctx.storeOrThrow.render();
+    this.ctx.store.render();
     return ids;
   }
 
 
   get(id: string): G.Feature | undefined {
-    const feature = this.ctx.storeOrThrow.get(id);
+    const feature = this.ctx.store.get(id);
     if (feature) {
       return feature.toGeoJSON();
     }
@@ -136,33 +140,33 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
   getAll(): G.FeatureCollection {
     return {
       type: Constants.geojsonTypes.FEATURE_COLLECTION,
-      features: this.ctx.storeOrThrow.getAll().map(feature => feature.toGeoJSON())
+      features: this.ctx.store.getAll().map(feature => feature.toGeoJSON())
     };
   }
 
   delete(featureIds: string | number | (string | number)[]) {
-    this.ctx.storeOrThrow.delete(featureIds, { silent: this.silent });
+    this.ctx.store.delete(featureIds, { silent: this.silent });
     // If we were in direct select mode and our selected feature no longer exists
     // (because it was deleted), we need to get out of that mode.
     // FIXME: Remove hard coded behavior.
-    if (this.getMode() === Constants.modes.DIRECT_SELECT && !this.ctx.storeOrThrow.getSelectedIds().length) {
-      this.ctx.eventsOrThrow.changeMode(Constants.modes.SIMPLE_SELECT, {} as T[keyof T], { silent: this.silent });
+    if (this.getMode() === Constants.modes.DIRECT_SELECT && !this.ctx.store.getSelectedIds().length) {
+      this.ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, {} as T[keyof T], { silent: this.silent });
     } else {
-      this.ctx.storeOrThrow.render();
+      this.ctx.store.render();
     }
 
     return this;
   }
 
   deleteAll() {
-    this.ctx.storeOrThrow.delete(this.ctx.storeOrThrow.getAllIds(), { silent: this.silent });
+    this.ctx.store.delete(this.ctx.store.getAllIds(), { silent: this.silent });
     // If we were in direct select mode, now our selected feature no longer exists,
     // so escape that mode.
     // FIXME: Remove hard coded behavior.
     if (this.getMode() === Constants.modes.DIRECT_SELECT) {
-      this.ctx.eventsOrThrow.changeMode(Constants.modes.SIMPLE_SELECT, {} as T[keyof T], { silent: this.silent });
+      this.ctx.events.changeMode(Constants.modes.SIMPLE_SELECT, {} as T[keyof T], { silent: this.silent });
     } else {
-      this.ctx.storeOrThrow.render();
+      this.ctx.store.render();
     }
 
     return this;
@@ -170,50 +174,52 @@ export default class MaplibreDrawApi<T extends Record<string, {}>> implements IC
 
   changeMode<K extends keyof T>(mode: K, modeOptions: T[K]) {
     // FIXME: they're hard coding behavior for mode strings, despite them being customizable....
+    // @ts-expect-error
+    modeOptions ??= {};
 
     // Avoid changing modes just to re-select what's already selected
     // FIXME: Remove hard coded behavior.
     if (mode === Constants.modes.SIMPLE_SELECT && this.getMode() === Constants.modes.SIMPLE_SELECT) {
-      if (stringSetsAreEqual(((modeOptions as any).featureIds || []), this.ctx.storeOrThrow.getSelectedIds())) return this;
+      if (stringSetsAreEqual(((modeOptions as any).featureIds || []), this.ctx.store.getSelectedIds())) return this;
       // And if we are changing the selection within simple_select mode, just change the selection,
       // instead of stopping and re-starting the mode
 
-      this.ctx.storeOrThrow.setSelected((modeOptions as any).featureIds, { silent: this.silent });
-      this.ctx.storeOrThrow.render();
+      this.ctx.store.setSelected((modeOptions as any).featureIds, { silent: this.silent });
+      this.ctx.store.render();
       return this;
     }
 
     // FIXME: Remove hard coded behavior.
     if (mode === Constants.modes.DIRECT_SELECT && this.getMode() === Constants.modes.DIRECT_SELECT &&
-      (modeOptions as any).featureId === this.ctx.storeOrThrow.getSelectedIds()[0]) {
+      (modeOptions as any).featureId === this.ctx.store.getSelectedIds()[0]) {
       return this;
     }
 
-    this.ctx.eventsOrThrow.changeMode(mode, modeOptions, { silent: this.silent });
+    this.ctx.events.changeMode(mode, modeOptions, { silent: this.silent });
     return this;
   }
 
   getMode() {
-    return this.ctx.eventsOrThrow.getMode();
+    return this.ctx.events.getMode();
   }
 
   trash() {
-    this.ctx.eventsOrThrow.trash();
+    this.ctx.events.trash();
     return this;
   }
 
   combineFeatures() {
-    this.ctx.eventsOrThrow.combineFeatures();
+    this.ctx.events.combineFeatures();
     return this;
   }
 
   uncombineFeatures() {
-    this.ctx.eventsOrThrow.uncombineFeatures();
+    this.ctx.events.uncombineFeatures();
     return this;
   }
 
   setFeatureProperty(featureId: string | string, property: string, value: any) {
-    this.ctx.storeOrThrow.setFeatureProperty(featureId, property, value, { silent: this.silent });
+    this.ctx.store.setFeatureProperty(featureId, property, value, { silent: this.silent });
     return this;
   }
 }

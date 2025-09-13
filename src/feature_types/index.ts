@@ -1,7 +1,7 @@
-import Polygon from './polygon.js';
-import LineString from './line_string.js';
-import Point from './point.js';
-import MultiFeature from './multi_feature.js';
+import Polygon from './polygon.ts';
+import LineString from './line_string.ts';
+import Point from './point.ts';
+import MultiFeature from './multi_feature.ts';
 
 export const featureTypes = {
   Polygon,

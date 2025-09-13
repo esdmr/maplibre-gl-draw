@@ -1,14 +1,14 @@
 import type * as G from 'geojson';
-import { noTarget, isOfMetaType, isActiveFeature, isInactiveFeature, isShiftDown } from '../lib/common_selectors.js';
-import createSupplementaryPoints from '../lib/create_supplementary_points.js';
-import constrainFeatureMovement from '../lib/constrain_feature_movement.js';
-import {disableDoubleClickZoom, enableDoubleClickZoom} from '../lib/double_click_zoom.js';
-import * as Constants from '../constants.js';
-import moveFeatures from '../lib/move_features.js';
-import ModeInterface from './mode_interface.js';
-import type Feature from '../feature_types/feature.js';
+import { noTarget, isOfMetaType, isActiveFeature, isInactiveFeature, isShiftDown } from '../lib/common_selectors.ts';
+import createSupplementaryPoints from '../lib/create_supplementary_points.ts';
+import constrainFeatureMovement from '../lib/constrain_feature_movement.ts';
+import {disableDoubleClickZoom, enableDoubleClickZoom} from '../lib/double_click_zoom.ts';
+import * as Constants from '../constants.ts';
+import moveFeatures from '../lib/move_features.ts';
+import ModeInterface from './mode_interface.ts';
+import type Feature from '../feature_types/feature.ts';
 import type { MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
-import { getFeatureTarget } from '../lib/feature_target.js';
+import { getFeatureTarget } from '../lib/feature_target.ts';
 
 const isVertex = isOfMetaType(Constants.meta.VERTEX);
 const isMidpoint = isOfMetaType(Constants.meta.MIDPOINT);
@@ -204,17 +204,17 @@ export default class DirectSelect extends ModeInterface<Opts, State> {
 
   private startDragging(state: State, {lngLat}: MapMouseEvent | MapTouchEvent) {
     if (state.initialDragPanState == null) {
-      state.initialDragPanState = this._ctx.mapOrThrow.dragPan.isEnabled();
+      state.initialDragPanState = this._ctx.map.dragPan.isEnabled();
     }
 
-    this._ctx.mapOrThrow.dragPan.disable();
+    this._ctx.map.dragPan.disable();
     state.canDragMove = true;
     state.dragMoveLocation = lngLat;
   }
 
   private stopDragging(state: State) {
     if (state.canDragMove && state.initialDragPanState === true) {
-      this._ctx.mapOrThrow.dragPan.enable();
+      this._ctx.map.dragPan.enable();
     }
 
     state.initialDragPanState = null;

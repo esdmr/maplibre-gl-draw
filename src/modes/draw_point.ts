@@ -1,8 +1,8 @@
 import type * as G from 'geojson';
-import * as CommonSelectors from '../lib/common_selectors.js';
-import * as Constants from '../constants.js';
-import ModeInterface from './mode_interface.js';
-import type Point from '../feature_types/point.js';
+import * as CommonSelectors from '../lib/common_selectors.ts';
+import * as Constants from '../constants.ts';
+import ModeInterface from './mode_interface.ts';
+import type Point from '../feature_types/point.ts';
 import type { MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
 
 type State = {
@@ -40,7 +40,7 @@ export default class DrawPoint extends ModeInterface<{}, State> {
 
   protected override onClick({point}: State, {lngLat}: MapMouseEvent) {
     this.updateUIClasses({ mouse: Constants.cursors.MOVE });
-    point.updateCoordinate('', lngLat.lng, lngLat.lat);
+    point.updateCoordinate(lngLat.lng, lngLat.lat);
     this.fire(Constants.events.CREATE, {
       features: [point.toGeoJSON()]
     });
@@ -49,7 +49,7 @@ export default class DrawPoint extends ModeInterface<{}, State> {
 
   protected override onTap({point}: State, {lngLat}: MapTouchEvent) {
     this.updateUIClasses({ mouse: Constants.cursors.MOVE });
-    point.updateCoordinate('', lngLat.lng, lngLat.lat);
+    point.updateCoordinate(lngLat.lng, lngLat.lat);
     this.fire(Constants.events.CREATE, {
       features: [point.toGeoJSON()]
     });
@@ -58,19 +58,17 @@ export default class DrawPoint extends ModeInterface<{}, State> {
 
   protected override onStop({point}: State) {
     this.activateUIButton();
-    if (!point.getCoordinate('').length) {
+    if (!point.getCoordinate(null).length) {
       this.deleteFeature([point.id], { silent: true });
     }
   }
 
   protected toDisplayFeatures({point}: State, geojson: G.Feature, display: (geojson: G.Feature) => void) {
-    if (geojson.geometry.type !== 'Point') return;
-
     // Never render the point we're drawing
     geojson.properties ??= {};
     const isActivePoint = geojson.properties.id === point.id;
     geojson.properties.active = (isActivePoint) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
-    if (!isActivePoint) return display(geojson);
+    if (!isActivePoint || geojson.geometry.type !== 'Point') return display(geojson);
   }
 
   protected override onTrash(state: State): void {

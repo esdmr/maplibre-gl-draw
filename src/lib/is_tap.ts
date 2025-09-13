@@ -1,5 +1,5 @@
-import euclideanDistance from './euclidean_distance.js';
-import type { ClickState } from './is_click.js';
+import euclideanDistance from './euclidean_distance.ts';
+import type { ClickState } from './is_click.ts';
 
 export const TAP_TOLERANCE = 25;
 export const TAP_INTERVAL = 250;

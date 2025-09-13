@@ -1,7 +1,7 @@
 import type { MapMouseEvent } from 'maplibre-gl';
-import * as Constants from '../constants.js';
-import type { MaplibreDrawContext } from '../context.js';
-import { featuresAtClick } from './features_at.js';
+import * as Constants from '../constants.ts';
+import type { MaplibreDrawContext } from '../context.ts';
+import { featuresAtClick } from './features_at.ts';
 
 export default function getFeatureAtAndSetCursors<T extends Record<string, {}>>(event: MapMouseEvent, ctx: MaplibreDrawContext<T>) {
   const features = featuresAtClick(event, undefined, ctx);
@@ -15,12 +15,12 @@ export default function getFeatureAtAndSetCursors<T extends Record<string, {}>>(
   }
 
   // FIXME: Yet another hard coded behavior folks!
-  if (typeof ctx.eventsOrThrow.currentModeName === 'string' && ctx.eventsOrThrow.currentModeName.includes('draw')) {
+  if (typeof ctx.events.currentModeName === 'string' && ctx.events.currentModeName.includes('draw')) {
     classes.mouse = Constants.cursors.ADD;
   }
 
-  ctx.uiOrThrow.queueMapClasses(classes);
-  ctx.uiOrThrow.updateMapClasses();
+  ctx.ui.queueMapClasses(classes);
+  ctx.ui.updateMapClasses();
 
   return features[0];
 }

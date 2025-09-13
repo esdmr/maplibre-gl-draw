@@ -1,17 +1,17 @@
 import type * as G from 'geojson';
-import toDenseArray from './lib/to_dense_array.js';
-import StringSet from './lib/string_set.js';
-import render from './render.js';
-import * as Constants from './constants.js';
-import type { MaplibreDrawContext } from './context.js';
-import type Feature from './feature_types/feature.js';
+import toDenseArray from './lib/to_dense_array.ts';
+import StringSet from './lib/string_set.ts';
+import render from './render.ts';
+import * as Constants from './constants.ts';
+import type { MaplibreDrawContext } from './context.ts';
+import type Feature from './feature_types/feature.ts';
 
 export default class Store<T extends Record<string, {}>> {
   ctx;
   _features: Record<string, Feature> = {};
   _featureIds = new StringSet();
   _selectedFeatureIds = new StringSet();
-  _selectedCoordinates: ({coord_path: string, feature_id: string})[] = [];
+  _selectedCoordinates: ({coord_path: string | null, feature_id: string})[] = [];
   _changedFeatureIds = new StringSet();
   _emitSelectionChange = false;
   _mapInitialConfig: Partial<Record<typeof Constants.interactions[number], boolean>> = {};
@@ -37,7 +37,7 @@ export default class Store<T extends Record<string, {}>> {
 
         // Fire deduplicated selection change event
         if (this._emitSelectionChange) {
-          this.ctx.eventsOrThrow.fire(Constants.events.SELECTION_CHANGE, {
+          this.ctx.events.fire(Constants.events.SELECTION_CHANGE, {
             features: this.getSelected().map(feature => feature.toGeoJSON()),
             points: this.getSelectedCoordinates().map((coordinates) => ({
               type: Constants.geojsonTypes.FEATURE,
@@ -54,7 +54,7 @@ export default class Store<T extends Record<string, {}>> {
         }
 
         // Fire render event
-        this.ctx.eventsOrThrow.fire(Constants.events.RENDER, {});
+        this.ctx.events.fire(Constants.events.RENDER, {});
       });
     }
   }
@@ -65,12 +65,13 @@ export default class Store<T extends Record<string, {}>> {
   createRenderBatch(): () => void {
     let numRenders = 0;
     // FIXME: no.
+    const oldRender = this.render;
     this.render = () => {
       numRenders++;
     };
 
     return () => {
-      this.render = Store.prototype.render;
+      this.render = oldRender;
       if (numRenders > 0) {
         this.render();
       }
@@ -94,7 +95,7 @@ export default class Store<T extends Record<string, {}>> {
     const feature = this.get(featureId);
 
     if (silent !== true && feature) {
-      this.ctx.eventsOrThrow.fire(Constants.events.CREATE, {
+      this.ctx.events.fire(Constants.events.CREATE, {
         features: [feature.toGeoJSON()]
       });
     }
@@ -117,7 +118,7 @@ export default class Store<T extends Record<string, {}>> {
     const feature = this.get(featureId);
 
     if (silent !== true && feature) {
-      this.ctx.eventsOrThrow.fire(Constants.events.UPDATE, {
+      this.ctx.events.fire(Constants.events.UPDATE, {
         action,
         features: [feature.toGeoJSON()]
       });
@@ -182,7 +183,7 @@ export default class Store<T extends Record<string, {}>> {
     });
 
     if (deletedFeaturesToEmit.length) {
-      this.ctx.eventsOrThrow.fire(Constants.events.DELETE, {features: deletedFeaturesToEmit});
+      this.ctx.events.fire(Constants.events.DELETE, {features: deletedFeaturesToEmit});
     }
 
     this._refreshSelectedCoordinates({ silent });
@@ -261,7 +262,7 @@ export default class Store<T extends Record<string, {}>> {
   /**
    * Sets the store's coordinates selection, clearing any prior values.
    */
-  setSelectedCoordinates(coordinates: Array<{coord_path: string, feature_id: string}>) {
+  setSelectedCoordinates(coordinates: Array<{coord_path: string | null, feature_id: string}>) {
     this._selectedCoordinates = coordinates;
     this._emitSelectionChange = true;
     return this;
@@ -333,9 +334,9 @@ export default class Store<T extends Record<string, {}>> {
    */
   storeMapConfig() {
     Constants.interactions.forEach((interaction) => {
-      const interactionSet = this.ctx.mapOrThrow[interaction];
+      const interactionSet = this.ctx.map[interaction];
       if (interactionSet) {
-        this._mapInitialConfig[interaction] = this.ctx.mapOrThrow[interaction].isEnabled();
+        this._mapInitialConfig[interaction] = this.ctx.map[interaction].isEnabled();
       }
     });
   }
@@ -347,9 +348,9 @@ export default class Store<T extends Record<string, {}>> {
     (Object.keys(this._mapInitialConfig) as Array<typeof Constants.interactions[number]>).forEach((key) => {
       const value = this._mapInitialConfig[key];
       if (value) {
-        this.ctx.mapOrThrow[key].enable();
+        this.ctx.map[key].enable();
       } else {
-        this.ctx.mapOrThrow[key].disable();
+        this.ctx.map[key].disable();
       }
     });
   }

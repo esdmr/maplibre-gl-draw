@@ -1,5 +1,5 @@
 import type * as G from 'geojson';
-import * as Constants from '../constants.js';
+import * as Constants from '../constants.ts';
 
 /**
  * Returns GeoJSON for a Point representing the
@@ -13,7 +13,7 @@ import * as Constants from '../constants.js';
  * @return Point
  */
 
-export default function(parentId: string, coordinates: G.Position, path: string, selected: boolean): G.Feature<G.Point> {
+export default function(parentId: string | number, coordinates: G.Position, path: string | null, selected: boolean): G.Feature<G.Point> {
   return {
     type: Constants.geojsonTypes.FEATURE,
     properties: {

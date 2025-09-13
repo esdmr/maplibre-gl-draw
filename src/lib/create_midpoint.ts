@@ -1,4 +1,4 @@
-import * as Constants from '../constants.js';
+import * as Constants from '../constants.ts';
 import type * as G from 'geojson';
 
 export default function createMidpoint(parent: string, startVertex: G.Feature<G.Point>, endVertex: G.Feature<G.Point>): G.Feature<G.Point> | null {

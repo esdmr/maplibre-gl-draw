@@ -1,12 +1,12 @@
 import type * as G from 'geojson';
-import * as CommonSelectors from '../lib/common_selectors.js';
-import {enableDoubleClickZoom, disableDoubleClickZoom} from '../lib/double_click_zoom.js';
-import * as Constants from '../constants.js';
-import isEventAtCoordinates from '../lib/is_event_at_coordinates.js';
-import createVertex from '../lib/create_vertex.js';
-import ModeInterface from './mode_interface.js';
+import * as CommonSelectors from '../lib/common_selectors.ts';
+import {enableDoubleClickZoom, disableDoubleClickZoom} from '../lib/double_click_zoom.ts';
+import * as Constants from '../constants.ts';
+import isEventAtCoordinates from '../lib/is_event_at_coordinates.ts';
+import createVertex from '../lib/create_vertex.ts';
+import ModeInterface from './mode_interface.ts';
 import type { MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
-import type Polygon from '../feature_types/polygon.js';
+import type Polygon from '../feature_types/polygon.ts';
 
 type State = {
   polygon: Polygon,
@@ -101,12 +101,11 @@ export default class DrawPolygon extends ModeInterface<{}, State> {
   }
 
   toDisplayFeatures({polygon}: State, geojson: G.Feature, display: (geojson: G.Feature) => void) {
-    if (geojson.geometry.type !== 'Polygon') return;
     geojson.properties ??= {};
 
     const isActivePolygon = geojson.properties.id === polygon.id;
     geojson.properties.active = (isActivePolygon) ? Constants.activeStates.ACTIVE : Constants.activeStates.INACTIVE;
-    if (!isActivePolygon) return display(geojson);
+    if (!isActivePolygon || geojson.geometry.type !== 'Polygon') return display(geojson);
 
     // Don't render a polygon until it has two positions
     // (and a 3rd which is just the first repeated)

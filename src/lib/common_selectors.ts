@@ -1,5 +1,5 @@
 import type { MapEventType, MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
-import * as Constants from '../constants.js';
+import * as Constants from '../constants.ts';
 
 export function isOfMetaType(type: typeof Constants["meta"][keyof typeof Constants["meta"]]) {
   return (e: MapMouseEvent | MapTouchEvent) => {
@@ -16,8 +16,11 @@ export function isOfMetaType(type: typeof Constants["meta"][keyof typeof Constan
 
 export function isShiftMousedown(e: MapEventType[keyof MapEventType]) {
   return 'originalEvent' in e &&
-    e.originalEvent instanceof MouseEvent &&
+    typeof e.originalEvent === 'object' &&
+    e.originalEvent !== null &&
+    'shiftKey' in e.originalEvent &&
     e.originalEvent.shiftKey &&
+    'button' in e.originalEvent &&
     e.originalEvent.button === 0;
 }
 
@@ -49,7 +52,6 @@ export function isInactiveFeature(e: MapMouseEvent | MapTouchEvent) {
 
 export function noTarget(e: MapMouseEvent | MapTouchEvent) {
   return !('featureTarget' in e) ||
-    e.featureTarget === null ||
     e.featureTarget === undefined;
 }
 
@@ -77,9 +79,10 @@ export function isVertex(e: MapMouseEvent | MapTouchEvent) {
 
 export function isShiftDown(e: MapEventType[keyof MapEventType]) {
   return 'originalEvent' in e &&
-    e.originalEvent instanceof Event &&
+    typeof e.originalEvent === 'object' &&
+    e.originalEvent !== null &&
     'shiftKey' in e.originalEvent &&
-    e.originalEvent.shiftKey === true;
+    e.originalEvent.shiftKey;
 }
 
 export function isEscapeKey({code}: KeyboardEvent) {

@@ -1,8 +1,6 @@
-import Events from './events.js';
-import Store from './store.js';
-import ui from './ui.js';
-import * as Constants from './constants.js';
-import type { MaplibreDrawContext } from './context.js';
+import Store from './store.ts';
+import * as Constants from './constants.ts';
+import type { MaplibreDrawContext } from './context.ts';
 import type { Map } from 'maplibre-gl';
 
 export default class Setup<T extends Record<string, {}>> {
@@ -11,8 +9,6 @@ export default class Setup<T extends Record<string, {}>> {
   controlContainer;
   map;
   store;
-  ui;
-  events;
   container;
   boxZoomInitial;
 
@@ -22,11 +18,9 @@ export default class Setup<T extends Record<string, {}>> {
 
     this.map = map;
     this.container = map.getContainer();
-    this.ui = ui(this.ctx);
     this.store = new Store(this.ctx);
-    this.events = new Events(this.ctx);
 
-    this.controlContainer = this.ui.addButtons();
+    this.controlContainer = this.ctx.ui.addButtons();
 
     if (this.ctx.options.boxSelect) {
       this.boxZoomInitial = map.boxZoom.isEnabled();
@@ -43,6 +37,8 @@ export default class Setup<T extends Record<string, {}>> {
       this.boxZoomInitial = false;
     }
 
+    this.ctx.events.changeMode(this.ctx.options.defaultMode[0], this.ctx.options.defaultMode[1]);
+
     if (map.loaded()) {
       this.connect();
     } else {
@@ -58,10 +54,10 @@ export default class Setup<T extends Record<string, {}>> {
 
     this.removeLayers();
     this.store.restoreMapConfig();
-    this.ui.removeButtons();
-    this.events.removeEventListeners();
-    this.ui.clearMapClasses();
-    if (this.ctx.boxZoomInitialOrThrow) this.map.boxZoom.enable();
+    this.ctx.ui.removeButtons();
+    this.ctx.events.removeEventListeners();
+    this.ctx.ui.clearMapClasses();
+    if (this.ctx.boxZoomInitial) this.map.boxZoom.enable();
 
     if (this.controlContainer && this.controlContainer.parentNode) this.controlContainer.parentNode.removeChild(this.controlContainer);
 
@@ -73,7 +69,7 @@ export default class Setup<T extends Record<string, {}>> {
     clearInterval(this.mapLoadedInterval);
     this.addLayers();
     this.store.storeMapConfig();
-    this.events.addEventListeners();
+    this.ctx.events.addEventListeners();
   }
 
   addLayers() {

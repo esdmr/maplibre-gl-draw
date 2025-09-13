@@ -1,9 +1,9 @@
 import type { LayerSpecification } from 'maplibre-gl';
-import * as Constants from './constants.js';
+import * as Constants from './constants.ts';
 
-import styles from './lib/theme.js';
-import * as modes from './modes/index.js';
-import type { ModeConstructors, ModeOptEntry, ModeOpts } from './modes/mode_interface.js';
+import styles from './lib/theme.ts';
+import * as modes from './modes/index.ts';
+import type { ModeConstructors, ModeOptEntry, ModeOpts } from './modes/mode_interface.ts';
 
 type OmitSource<T> = T extends infer S ? Omit<S, 'source'> : never;
 
@@ -81,7 +81,7 @@ function addSources(styles: DrawLayerSpecification[], sourceBucket: 'cold' | 'ho
   }));
 }
 
-export default function setupOptions(options?: PartialOptions<typeof modes>): Options<typeof modes>;
+export default function setupOptions(options?: PartialOptions<DefaultModeOpts>): Options<DefaultModeOpts>;
 
 export default function setupOptions<T extends Pick<typeof defaultOptions.modes, typeof defaultOptions.defaultMode[0]> & Record<string, {}>>(options: PartialOptions<T>): Options<T>;
 

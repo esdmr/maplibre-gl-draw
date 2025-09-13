@@ -1,24 +1,24 @@
 import type * as G from 'geojson';
 import type { MapMouseEvent, MapTouchEvent, PointLike } from 'maplibre-gl';
-import * as Constants from '../constants.js';
-import type { MaplibreDrawContext } from '../context.js';
-import type Events from '../events.js';
-import Feature from '../feature_types/feature.js';
-import LineString from '../feature_types/line_string.js';
-import MultiFeature from '../feature_types/multi_feature.js';
-import Point from '../feature_types/point.js';
-import Polygon from '../feature_types/polygon.js';
-import { featuresAtClick, featuresAtTouch } from '../lib/features_at.js';
-import type { MapClasses } from '../ui.js';
+import * as Constants from '../constants.ts';
+import type { MaplibreDrawContext } from '../context.ts';
+import type Events from '../events.ts';
+import Feature from '../feature_types/feature.ts';
+import LineString from '../feature_types/line_string.ts';
+import MultiFeature from '../feature_types/multi_feature.ts';
+import Point from '../feature_types/point.ts';
+import Polygon from '../feature_types/polygon.ts';
+import { featuresAtClick, featuresAtTouch } from '../lib/features_at.ts';
+import type { MapClasses } from '../ui.ts';
 
 export type ModeConstructors<T extends Record<string, {}>> = {[K in keyof T]: ModeConstructor<T[K]>};
 export type ModeInterfaces<T extends Record<string, {}>> = {[K in keyof T]: ModeInterface<T[K]>};
 export type ModeOpts<T extends Record<string, ModeConstructor<{}>>> = {[K in keyof T]: T[K] extends ModeConstructor<infer O> ? O : never};
 export type ModeOptEntry<T extends Record<string, {}>> = {[K in keyof T]: [K, T[K]]}[keyof T];
 
-export type ModeConstructor<Opts = {}> = new (ctx: MaplibreDrawContext<any>) => ModeInterface<Opts, any>;
+export type ModeConstructor<Opts extends {} = {}> = new (ctx: MaplibreDrawContext<any>) => ModeInterface<Opts, any>;
 
-export default abstract class ModeInterface<Opts = {}, State = {}> {
+export default abstract class ModeInterface<Opts extends {} = {}, State = {}> {
   _ctx: MaplibreDrawContext<any>
   private _state: State | undefined;
 
@@ -35,19 +35,25 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
   }
 
   start(opts: Opts) {
+    if (this._state !== undefined) {
+      this.stop();
+    }
+
     this._state = this.onSetup(opts); // this should set ui buttons
     return this;
   }
 
   stop() {
-    this.onStop?.(this._stateOrThrow);
+    if (this._state === undefined) return;
+    const oldState = this._stateOrThrow;
     this._state = undefined;
+    this.onStop?.(oldState);
   }
 
   trash() {
     if (this.onTrash) {
       this.onTrash(this._stateOrThrow);
-      this._ctx.storeOrThrow.render();
+      this._ctx.store.render();
     }
   }
 
@@ -66,120 +72,120 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
   drag(e: MapMouseEvent) {
     if (this.onDrag) {
       if (!this.onDrag(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   click(e: MapMouseEvent) {
     if (this.onClick) {
       if (!this.onClick(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   mousemove(e: MapMouseEvent) {
     if (this.onMouseMove) {
       if (!this.onMouseMove(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   mousedown(e: MapMouseEvent) {
     if (this.onMouseDown) {
       if (!this.onMouseDown(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   mouseup(e: MapMouseEvent) {
     if (this.onMouseUp) {
       if (!this.onMouseUp(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   mouseout(e: MapMouseEvent) {
     if (this.onMouseOut) {
       if (!this.onMouseOut(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   keyup(e: KeyboardEvent) {
     if (this.onKeyUp) {
       if (!this.onKeyUp(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   keydown(e: KeyboardEvent) {
     if (this.onKeyDown) {
       if (!this.onKeyDown(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   touchstart(e: MapTouchEvent) {
     if (this.onTouchStart) {
       if (!this.onTouchStart(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   touchmove(e: MapTouchEvent) {
     if (this.onTouchMove) {
       if (!this.onTouchMove(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   touchend(e: MapTouchEvent) {
     if (this.onTouchEnd) {
       if (!this.onTouchEnd(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
   tap(e: MapTouchEvent) {
     if (this.onTap) {
       if (!this.onTap(this._stateOrThrow, e)) {
-        this._ctx.storeOrThrow.render();
+        this._ctx.store.render();
       }
 
-      this._ctx.uiOrThrow.updateMapClasses();
+      this._ctx.ui.updateMapClasses();
     }
   }
 
@@ -187,17 +193,17 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
    * Sets Draw's interal selected state
    */
   protected setSelected(featureIds: (string | number)[]) {
-    return this._ctx.storeOrThrow.setSelected(featureIds);
+    return this._ctx.store.setSelected(featureIds);
   }
 
   /**
    * Sets Draw's internal selected coordinate state
    */
-  protected setSelectedCoordinates(coords: {coord_path: string, feature_id: string}[]) {
-    this._ctx.storeOrThrow.setSelectedCoordinates(coords);
+  protected setSelectedCoordinates(coords: {coord_path: string | null, feature_id: string}[]) {
+    this._ctx.store.setSelectedCoordinates(coords);
 
     for (const id of new Set(coords.map(i => i.feature_id))) {
-      this._ctx.storeOrThrow.get(id)?.changed();
+      this._ctx.store.get(id)?.changed();
     }
   }
 
@@ -205,49 +211,49 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
    * Get all selected features as a {@link Feature}
    */
   protected getSelected() {
-    return this._ctx.storeOrThrow.getSelected();
+    return this._ctx.store.getSelected();
   }
 
   /**
    * Get the ids of all currently selected features
    */
   protected getSelectedIds() {
-    return this._ctx.storeOrThrow.getSelectedIds();
+    return this._ctx.store.getSelectedIds();
   }
 
   /**
    * Check if a feature is selected
    */
   protected isSelected(id: string | number) {
-    return this._ctx.storeOrThrow.isSelected(id);
+    return this._ctx.store.isSelected(id);
   }
 
   /**
    * Get a {@link Feature} by its id
    */
   protected getFeature(id: string | number) {
-    return this._ctx.storeOrThrow.get(id);
+    return this._ctx.store.get(id);
   }
 
   /**
    * Add a feature to draw's internal selected state
    */
   protected select(id: string | number | (string | number)[]) {
-    return this._ctx.storeOrThrow.select(id);
+    return this._ctx.store.select(id);
   }
 
   /**
    * Remove a feature from draw's internal selected state
    */
   protected deselect(id: string | number) {
-    return this._ctx.storeOrThrow.deselect(id);
+    return this._ctx.store.deselect(id);
   }
 
   /**
    * Delete a feature from draw
    */
   protected deleteFeature(id: string | number | (string | number)[], opts: {silent?: boolean} = {}) {
-    return this._ctx.storeOrThrow.delete(id, opts);
+    return this._ctx.store.delete(id, opts);
   }
 
   /**
@@ -255,21 +261,21 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
    * See {@link ModeInterface.newFeature} for converting geojson into a DrawFeature
    */
   protected addFeature(feature: Feature<any>, opts: {silent?: boolean} = {}) {
-    return this._ctx.storeOrThrow.add(feature, opts);
+    return this._ctx.store.add(feature, opts);
   }
 
   /**
    * Clear all selected features
    */
   protected clearSelectedFeatures() {
-    return this._ctx.storeOrThrow.clearSelected();
+    return this._ctx.store.clearSelected();
   }
 
   /**
    * Clear all selected coordinates
    */
   protected clearSelectedCoordinates() {
-    return this._ctx.storeOrThrow.clearSelectedCoordinates();
+    return this._ctx.store.clearSelectedCoordinates();
   }
 
   /**
@@ -285,7 +291,7 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
       uncombineFeatures: actions.uncombineFeatures || false
     };
 
-    return this._ctx.eventsOrThrow.actionable(newSet);
+    return this._ctx.events.actionable(newSet);
   }
 
   /**
@@ -296,21 +302,21 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
    */
   protected changeMode(mode: string, opts: unknown = {}, eventOpts: {silent?: boolean} = {}) {
     // FIXME: Remove all hard coded behaviors.
-    return this._ctx.eventsOrThrow.changeMode(mode, opts as any, eventOpts);
+    return this._ctx.events.changeMode(mode, opts as any, eventOpts);
   }
 
   /**
    * Fire a map event
    */
   protected fire(eventName: string, eventData: unknown) {
-    return this._ctx.eventsOrThrow.fire(eventName, eventData);
+    return this._ctx.events.fire(eventName, eventData);
   }
 
   /**
    * Update the state of draw map classes
    */
   protected updateUIClasses(opts: Partial<MapClasses>) {
-    return this._ctx.uiOrThrow.queueMapClasses(opts);
+    return this._ctx.ui.queueMapClasses(opts);
   }
 
   /**
@@ -318,7 +324,7 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
    * @param name - name of the button to make active, leave as undefined to set buttons to be inactive
    */
   protected activateUIButton(name?: string) {
-    return this._ctx.uiOrThrow.setActiveButton(name);
+    return this._ctx.ui.setActiveButton(name);
   }
 
   /**
@@ -387,7 +393,7 @@ export default abstract class ModeInterface<Opts = {}, State = {}> {
    * Force draw to rerender the feature of the provided id
    */
   protected doRender(id: string | number) {
-    return this._ctx.storeOrThrow.featureChanged(id);
+    return this._ctx.store.featureChanged(id);
   }
 
   /**

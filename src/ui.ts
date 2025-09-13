@@ -1,5 +1,5 @@
-import * as Constants from './constants.js';
-import type { MaplibreDrawContext } from './context.js';
+import * as Constants from './constants.ts';
+import type { MaplibreDrawContext } from './context.ts';
 
 const classTypes = ['mode', 'feature', 'mouse'] as const;
 
@@ -46,11 +46,11 @@ export default function ui<T extends Record<string, {}>>(ctx: MaplibreDrawContex
     });
 
     if (classesToRemove.length > 0) {
-      ctx.containerOrThrow.classList.remove(...classesToRemove);
+      ctx.container.classList.remove(...classesToRemove);
     }
 
     if (classesToAdd.length > 0) {
-      ctx.containerOrThrow.classList.add(...classesToAdd);
+      ctx.container.classList.add(...classesToAdd);
     }
 
     currentMapClasses = Object.assign(currentMapClasses, nextMapClasses);
@@ -107,38 +107,38 @@ export default function ui<T extends Record<string, {}>>(ctx: MaplibreDrawContex
     if (!controls) return controlGroup;
 
     // FIXME: Add base type to modes
-    if (controls[Constants.types.POINT] && Constants.modes.DRAW_POINT in (ctx.options.modes as any)) {
+    if (controls[Constants.types.POINT]) {
       buttonElements[Constants.types.POINT] = createControlButton(Constants.types.POINT, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_POINT,
         title: `Marker tool ${ctx.options.keybindings ? '(1)' : ''}`,
         // FIXME: Remove hardcoded activation phase
-        onActivate: () => ctx.eventsOrThrow.changeMode(Constants.modes.DRAW_POINT as keyof T, {} as T[keyof T]),
-        onDeactivate: () => ctx.eventsOrThrow.trash()
+        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POINT as keyof T, {} as T[keyof T]),
+        onDeactivate: () => ctx.events.trash()
       });
     }
 
     // FIXME: Add base type to modes
-    if (controls[Constants.types.LINE] && Constants.modes.DRAW_LINE_STRING in (ctx.options.modes as any)) {
+    if (controls[Constants.types.LINE]) {
       buttonElements[Constants.types.LINE] = createControlButton(Constants.types.LINE, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_LINE,
         title: `LineString tool ${ctx.options.keybindings ? '(2)' : ''}`,
         // FIXME: Remove hardcoded activation phase
-        onActivate: () => ctx.eventsOrThrow.changeMode(Constants.modes.DRAW_LINE_STRING as keyof T, {} as T[keyof T]),
-        onDeactivate: () => ctx.eventsOrThrow.trash()
+        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_LINE_STRING as keyof T, {} as T[keyof T]),
+        onDeactivate: () => ctx.events.trash()
       });
     }
 
     // FIXME: Add base type to modes
-    if (controls[Constants.types.POLYGON] && Constants.modes.DRAW_POLYGON in (ctx.options.modes as any)) {
+    if (controls[Constants.types.POLYGON]) {
       buttonElements[Constants.types.POLYGON] = createControlButton(Constants.types.POLYGON, {
         container: controlGroup,
         className: Constants.classes.CONTROL_BUTTON_POLYGON,
         title: `Polygon tool ${ctx.options.keybindings ? '(3)' : ''}`,
         // FIXME: Remove hardcoded activation phase
-        onActivate: () => ctx.eventsOrThrow.changeMode(Constants.modes.DRAW_POLYGON as keyof T, {} as T[keyof T]),
-        onDeactivate: () => ctx.eventsOrThrow.trash()
+        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POLYGON as keyof T, {} as T[keyof T]),
+        onDeactivate: () => ctx.events.trash()
       });
     }
 
@@ -148,7 +148,7 @@ export default function ui<T extends Record<string, {}>>(ctx: MaplibreDrawContex
         className: Constants.classes.CONTROL_BUTTON_TRASH,
         title: 'Delete',
         onActivate: () => {
-          ctx.eventsOrThrow.trash();
+          ctx.events.trash();
         }
       });
     }
@@ -159,7 +159,7 @@ export default function ui<T extends Record<string, {}>>(ctx: MaplibreDrawContex
         className: Constants.classes.CONTROL_BUTTON_COMBINE_FEATURES,
         title: 'Combine',
         onActivate: () => {
-          ctx.eventsOrThrow.combineFeatures();
+          ctx.events.combineFeatures();
         }
       });
     }
@@ -170,7 +170,7 @@ export default function ui<T extends Record<string, {}>>(ctx: MaplibreDrawContex
         className: Constants.classes.CONTROL_BUTTON_UNCOMBINE_FEATURES,
         title: 'Uncombine',
         onActivate: () => {
-          ctx.eventsOrThrow.uncombineFeatures();
+          ctx.events.uncombineFeatures();
         }
       });
     }

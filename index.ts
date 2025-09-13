@@ -2,12 +2,12 @@ import type MaplibreDrawApi from './src/api.ts';
 import * as Constants from './src/constants.ts';
 import { MaplibreDrawContext } from './src/context.ts';
 import * as lib from './src/lib/index.ts';
-import * as modes from './src/modes/index.js';
+import * as modes from './src/modes/index.ts';
 import type { ModeOptEntry } from './src/modes/mode_interface.ts';
-import type { defaultOptions, PartialOptions } from './src/options.ts';
+import type { DefaultModeOpts, defaultOptions, PartialOptions } from './src/options.ts';
 import setupOptions from './src/options.ts';
 
-export default function MaplibreDraw(options?: PartialOptions<typeof modes>): MaplibreDrawApi<typeof modes>;
+export default function MaplibreDraw(options?: PartialOptions<DefaultModeOpts>): MaplibreDrawApi<DefaultModeOpts>;
 
 export default function MaplibreDraw<T extends Pick<typeof defaultOptions.modes, typeof defaultOptions.defaultMode[0]> & Record<string, {}>>(options: PartialOptions<T>): MaplibreDrawApi<T>;
 

@@ -1,14 +1,14 @@
 import type * as G from 'geojson';
-import * as CommonSelectors from '../lib/common_selectors.js';
-import mouseEventPoint from '../lib/mouse_event_point.js';
-import createSupplementaryPoints from '../lib/create_supplementary_points.js';
-import StringSet from '../lib/string_set.js';
-import {enableDoubleClickZoom, disableDoubleClickZoom} from '../lib/double_click_zoom.js';
-import moveFeatures from '../lib/move_features.js';
-import * as Constants from '../constants.js';
-import ModeInterface from './mode_interface.js';
+import * as CommonSelectors from '../lib/common_selectors.ts';
+import mouseEventPoint from '../lib/mouse_event_point.ts';
+import createSupplementaryPoints from '../lib/create_supplementary_points.ts';
+import StringSet from '../lib/string_set.ts';
+import {enableDoubleClickZoom, disableDoubleClickZoom} from '../lib/double_click_zoom.ts';
+import moveFeatures from '../lib/move_features.ts';
+import * as Constants from '../constants.ts';
+import ModeInterface from './mode_interface.ts';
 import type { MapMouseEvent, MapTouchEvent, Point } from 'maplibre-gl';
-import { getFeatureTarget } from '../lib/feature_target.js';
+import { getFeatureTarget } from '../lib/feature_target.ts';
 
 type State = {
   dragMoveLocation: {lng: number, lat: number} | null,
@@ -37,7 +37,7 @@ export default class SimpleSelect extends ModeInterface<Opts, State> {
       canBoxSelect: false,
       dragMoving: false,
       canDragMove: false,
-      initialDragPanState: this._ctx.mapOrThrow.dragPan.isEnabled(),
+      initialDragPanState: this._ctx.map.dragPan.isEnabled(),
       initiallySelectedFeatureIds: featureIds || []
     }
 
@@ -90,7 +90,7 @@ export default class SimpleSelect extends ModeInterface<Opts, State> {
   private getUniqueIds(allFeatures: G.Feature[]) {
     if (!allFeatures.length) return [];
     const ids = allFeatures.map(({properties}) => properties?.id)
-      .filter((id): id is string => typeof id !== 'string')
+      .filter((id): id is string => typeof id === 'string')
       .reduce((memo, id) => {
         memo.add(id);
         return memo;
@@ -106,7 +106,7 @@ export default class SimpleSelect extends ModeInterface<Opts, State> {
     }
 
     if ((state.canDragMove || state.canBoxSelect) && state.initialDragPanState === true) {
-      this._ctx.mapOrThrow.dragPan.enable();
+      this._ctx.map.dragPan.enable();
     }
 
     state.boxSelecting = false;
@@ -182,7 +182,7 @@ export default class SimpleSelect extends ModeInterface<Opts, State> {
     this.stopExtendedInteractions(state);
 
     // Disable map.dragPan immediately so it can't start
-    this._ctx.mapOrThrow.dragPan.disable();
+    this._ctx.map.dragPan.disable();
 
     // Re-render it and enable drag move
     this.doRender(getFeatureTarget(e).properties!.id);
@@ -236,16 +236,16 @@ export default class SimpleSelect extends ModeInterface<Opts, State> {
   }
 
   protected override onMouseDown(state: State, e: MapMouseEvent) {
-    state.initialDragPanState = this._ctx.mapOrThrow.dragPan.isEnabled();
+    state.initialDragPanState = this._ctx.map.dragPan.isEnabled();
     if (CommonSelectors.isActiveFeature(e)) return this.startOnActiveFeature(state, e);
     if (this._ctx.options.boxSelect && CommonSelectors.isShiftMousedown(e)) return this.startBoxSelect(state, e);
   }
 
   private startBoxSelect(state: State, {originalEvent}: MapMouseEvent) {
     this.stopExtendedInteractions(state);
-    this._ctx.mapOrThrow.dragPan.disable();
+    this._ctx.map.dragPan.disable();
     // Enable box select
-    state.boxSelectStartLocation = mouseEventPoint(originalEvent, this._ctx.mapOrThrow.getContainer());
+    state.boxSelectStartLocation = mouseEventPoint(originalEvent, this._ctx.map.getContainer());
     state.canBoxSelect = true;
   }
 
@@ -266,11 +266,11 @@ export default class SimpleSelect extends ModeInterface<Opts, State> {
     if (!state.boxSelectElement) {
       state.boxSelectElement = document.createElement('div');
       state.boxSelectElement.classList.add(Constants.classes.BOX_SELECT);
-      this._ctx.mapOrThrow.getContainer().appendChild(state.boxSelectElement);
+      this._ctx.map.getContainer().appendChild(state.boxSelectElement);
     }
 
     // Adjust the box node's width and xy position
-    const current = mouseEventPoint(originalEvent, this._ctx.mapOrThrow.getContainer());
+    const current = mouseEventPoint(originalEvent, this._ctx.map.getContainer());
     const minX = Math.min(state.boxSelectStartLocation!.x, current.x);
     const maxX = Math.max(state.boxSelectStartLocation!.x, current.x);
     const minY = Math.min(state.boxSelectStartLocation!.y, current.y);
@@ -303,7 +303,7 @@ export default class SimpleSelect extends ModeInterface<Opts, State> {
     } else if (state.boxSelecting) {
       const featuresInBox = this.featuresAt(undefined, [
           state.boxSelectStartLocation!,
-          mouseEventPoint(originalEvent, this._ctx.mapOrThrow.getContainer())
+          mouseEventPoint(originalEvent, this._ctx.map.getContainer())
         ], 'click');
       const idsToSelect = this.getUniqueIds(featuresInBox)
         .filter(id => !this.isSelected(id));

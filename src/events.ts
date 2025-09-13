@@ -1,13 +1,13 @@
 import type * as G from 'geojson';
 import type { MapDataEvent, MapMouseEvent, MapTouchEvent } from 'maplibre-gl';
-import * as Constants from './constants.js';
-import type { MaplibreDrawContext } from './context.js';
-import * as CommonSelectors from './lib/common_selectors.js';
-import { featuresAtTouch } from './lib/features_at.js';
-import getFeaturesAndSetCursor from './lib/get_features_and_set_cursor.js';
-import isClick, { type ClickState } from './lib/is_click.js';
-import isTap, { type TapState } from './lib/is_tap.js';
-import type { ModeInterfaces } from './modes/mode_interface.js';
+import * as Constants from './constants.ts';
+import type { MaplibreDrawContext } from './context.ts';
+import * as CommonSelectors from './lib/common_selectors.ts';
+import { featuresAtTouch } from './lib/features_at.ts';
+import getFeaturesAndSetCursor from './lib/get_features_and_set_cursor.ts';
+import isClick, { type ClickState } from './lib/is_click.ts';
+import isTap, { type TapState } from './lib/is_tap.ts';
+import type { ModeInterfaces } from './modes/mode_interface.ts';
 
 export default class Events<T extends Record<string, {}>> {
   ctx;
@@ -29,7 +29,7 @@ export default class Events<T extends Record<string, {}>> {
         point: event.point,
         time: new Date().getTime()
       })) {
-        this.ctx.uiOrThrow.queueMapClasses({ mouse: Constants.cursors.DRAG });
+        this.ctx.ui.queueMapClasses({ mouse: Constants.cursors.DRAG });
         this.currentMode.drag(event);
       } else {
         event.originalEvent.stopPropagation();
@@ -126,7 +126,7 @@ export default class Events<T extends Record<string, {}>> {
     },
 
     keydown: (event: KeyboardEvent) => {
-      const isMapElement = (event.target as HTMLElement).classList.contains(Constants.classes.CANVAS);
+      const isMapElement = event.target === event.currentTarget;
       if (!isMapElement) return; // we only handle events on the map
 
       if ((CommonSelectors.isBackspaceKey(event) || CommonSelectors.isDeleteKey(event)) && this.ctx.options.controls.trash) {
@@ -154,12 +154,12 @@ export default class Events<T extends Record<string, {}>> {
 
     data: ({dataType}: MapDataEvent) => {
       if (dataType === 'style') {
-        const { setupOrThrow, mapOrThrow, options, storeOrThrow } = this.ctx;
-        const hasLayers = options.styles.some(({id}) => mapOrThrow.getLayer(id));
+        const { setupOrThrow, map, options, store } = this.ctx;
+        const hasLayers = options.styles.some(({id}) => map.getLayer(id));
         if (!hasLayers) {
           setupOrThrow.addLayers();
-          storeOrThrow.setDirty();
-          storeOrThrow.render();
+          store.setDirty();
+          store.render();
         }
       }
     },
@@ -167,7 +167,7 @@ export default class Events<T extends Record<string, {}>> {
 
   constructor(ctx: MaplibreDrawContext<T>) {
     this.ctx = ctx;
-    ctx.setup!.events = this; // FIXME: Circular dependency nonsense...
+    ctx.events = this; // FIXME: Circular dependency nonsense...
 
     // FIXME: add base type to modes
     this.modes = Object.fromEntries(
@@ -176,7 +176,7 @@ export default class Events<T extends Record<string, {}>> {
     ) as any;
 
     this.currentModeName = this.ctx.options.defaultMode[0];
-    this.currentMode = this.modes[this.ctx.options.defaultMode[0]].start(this.ctx.options.defaultMode[1]);
+    this.currentMode = this.modes[this.ctx.options.defaultMode[0]];
   }
 
   currentModeRender(geojson: G.GeoJSON, push: (item: G.Feature) => void) {
@@ -185,42 +185,42 @@ export default class Events<T extends Record<string, {}>> {
 
   fire(eventName: string, eventData: unknown) {
     if (!this.ctx.setup) return;
-    this.ctx.mapOrThrow.fire(eventName, eventData);
+    this.ctx.map.fire(eventName, eventData);
   }
 
   addEventListeners() {
-    this.ctx.mapOrThrow.on('mousemove', this.events.mousemove);
-    this.ctx.mapOrThrow.on('mousedown', this.events.mousedown);
-    this.ctx.mapOrThrow.on('mouseup', this.events.mouseup);
-    this.ctx.mapOrThrow.on('data', this.events.data);
+    this.ctx.map.on('mousemove', this.events.mousemove);
+    this.ctx.map.on('mousedown', this.events.mousedown);
+    this.ctx.map.on('mouseup', this.events.mouseup);
+    this.ctx.map.on('data', this.events.data);
 
-    this.ctx.mapOrThrow.on('touchmove', this.events.touchmove);
-    this.ctx.mapOrThrow.on('touchstart', this.events.touchstart);
-    this.ctx.mapOrThrow.on('touchend', this.events.touchend);
+    this.ctx.map.on('touchmove', this.events.touchmove);
+    this.ctx.map.on('touchstart', this.events.touchstart);
+    this.ctx.map.on('touchend', this.events.touchend);
 
-    this.ctx.containerOrThrow.addEventListener('mouseout', this.events.mouseout);
+    this.ctx.container.addEventListener('mouseout', this.events.mouseout);
 
     if (this.ctx.options.keybindings) {
-      this.ctx.containerOrThrow.addEventListener('keydown', this.events.keydown);
-      this.ctx.containerOrThrow.addEventListener('keyup', this.events.keyup);
+      this.ctx.container.addEventListener('keydown', this.events.keydown);
+      this.ctx.container.addEventListener('keyup', this.events.keyup);
     }
   }
 
   removeEventListeners() {
-    this.ctx.mapOrThrow.off('mousemove', this.events.mousemove);
-    this.ctx.mapOrThrow.off('mousedown', this.events.mousedown);
-    this.ctx.mapOrThrow.off('mouseup', this.events.mouseup);
-    this.ctx.mapOrThrow.off('data', this.events.data);
+    this.ctx.map.off('mousemove', this.events.mousemove);
+    this.ctx.map.off('mousedown', this.events.mousedown);
+    this.ctx.map.off('mouseup', this.events.mouseup);
+    this.ctx.map.off('data', this.events.data);
 
-    this.ctx.mapOrThrow.off('touchmove', this.events.touchmove);
-    this.ctx.mapOrThrow.off('touchstart', this.events.touchstart);
-    this.ctx.mapOrThrow.off('touchend', this.events.touchend);
+    this.ctx.map.off('touchmove', this.events.touchmove);
+    this.ctx.map.off('touchstart', this.events.touchstart);
+    this.ctx.map.off('touchend', this.events.touchend);
 
-    this.ctx.containerOrThrow.removeEventListener('mouseout', this.events.mouseout);
+    this.ctx.container.removeEventListener('mouseout', this.events.mouseout);
 
     if (this.ctx.options.keybindings) {
-      this.ctx.containerOrThrow.removeEventListener('keydown', this.events.keydown);
-      this.ctx.containerOrThrow.removeEventListener('keyup', this.events.keyup);
+      this.ctx.container.removeEventListener('keydown', this.events.keydown);
+      this.ctx.container.removeEventListener('keyup', this.events.keyup);
     }
   }
 
@@ -251,11 +251,11 @@ export default class Events<T extends Record<string, {}>> {
     this.currentMode = mode.start(nextModeOptions);
 
     if (!silent) {
-      this.ctx.mapOrThrow.fire(Constants.events.MODE_CHANGE, { mode: modeName});
+      this.ctx.map.fire(Constants.events.MODE_CHANGE, { mode: modeName });
     }
 
-    this.ctx.storeOrThrow.setDirty();
-    this.ctx.storeOrThrow.render();
+    this.ctx.store.setDirty();
+    this.ctx.store.render();
   }
 
   actionable(actions: Partial<Record<keyof Events<T>['actionState'], boolean>>) {
@@ -267,7 +267,7 @@ export default class Events<T extends Record<string, {}>> {
       this.actionState[k] = v;
     });
 
-    if (changed) this.ctx.mapOrThrow.fire(Constants.events.ACTIONABLE, { actions: this.actionState });
+    if (changed) this.ctx.map.fire(Constants.events.ACTIONABLE, { actions: this.actionState });
   }
 
   private _isKeyModeValid (event: KeyboardEvent) {

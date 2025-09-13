@@ -1,5 +1,5 @@
 import type * as G from 'geojson';
-import {LAT_MIN, LAT_MAX, LAT_RENDERED_MIN, LAT_RENDERED_MAX, LNG_MIN, LNG_MAX} from '../constants.js';
+import {LAT_MIN, LAT_MAX, LAT_RENDERED_MIN, LAT_RENDERED_MAX, LNG_MIN, LNG_MAX} from '../constants.ts';
 
 function extent({geometry}: G.Feature) {
   if (geometry.type === 'GeometryCollection') {

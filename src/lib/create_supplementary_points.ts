@@ -1,16 +1,16 @@
-import createVertex from './create_vertex.js';
-import createMidpoint from './create_midpoint.js';
-import * as Constants from '../constants.js';
+import createVertex from './create_vertex.ts';
+import createMidpoint from './create_midpoint.ts';
+import * as Constants from '../constants.ts';
 import type * as G from 'geojson';
 
-function createSupplementaryPoints(geojson: G.Feature, options: { midpoints?: boolean; selectedPaths?: string[] } = {}, basePath: string | null = null) {
+function createSupplementaryPoints(geojson: G.Feature, options: { midpoints?: boolean; selectedPaths?: (string | null)[] } = {}, basePath: string | null = null) {
   const featureId = geojson.properties && geojson.properties.id;
 
   let supplementaryPoints: G.Feature<G.Point>[] = [];
 
   if (geojson.geometry.type === Constants.geojsonTypes.POINT) {
     // For points, just create a vertex
-    supplementaryPoints.push(createVertex(featureId, geojson.geometry.coordinates, basePath ?? '', isSelectedPath(basePath ?? '')));
+    supplementaryPoints.push(createVertex(featureId, geojson.geometry.coordinates, basePath, isSelectedPath(basePath)));
   } else if (geojson.geometry.type === Constants.geojsonTypes.POLYGON) {
     // Cycle through a Polygon's rings and
     // process each line
@@ -54,7 +54,7 @@ function createSupplementaryPoints(geojson: G.Feature, options: { midpoints?: bo
     });
   }
 
-  function isSelectedPath(path: string) {
+  function isSelectedPath(path: string | null) {
     if (!Array.isArray(options.selectedPaths)) return false;
     return options.selectedPaths.includes(path);
   }

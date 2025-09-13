@@ -1,6 +1,6 @@
-import constrainFeatureMovement from './constrain_feature_movement.js';
-import * as Constants from '../constants.js';
-import type Feature from '../feature_types/feature.js';
+import constrainFeatureMovement from './constrain_feature_movement.ts';
+import * as Constants from '../constants.ts';
+import type Feature from '../feature_types/feature.ts';
 import type * as G from 'geojson';
 
 export default function moveFeatures(features: Feature<any>[], delta: { lng: number; lat: number; }) {
